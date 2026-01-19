@@ -1,0 +1,263 @@
+flowchart TB
+    %% External Data Sources
+    NWS[National Weather Service API<br/>alerts.weather.gov]
+    NOAA[NOAA Tides & Currents API<br/>tidesandcurrents.noaa.gov]
+    GitHub[GitHub Repository<br/>prasannapad/wavealert360]
+    AzureBlob[Azure Blob Storage<br/>Audio Files]
+    
+    %% Azure Cloud Services
+    DeviceAPI[Device Service API<br/>/api/alert/mac]
+    DeviceLogic{Check Device Config}
+    DeviceMode{Operating Mode?}
+    TestScenario[Return Test Scenario<br/>from devices.json]
+    LiveAlert[Fetch Live NWS Alerts<br/>for Device Location]
+    DeviceResponse[Return Alert Level<br/>SAFE/CAUTION/DANGER]
+    
+    MockAPI[Mock NWS API<br/>/api/alerts/active]
+    MockScenarios[Test Scenarios<br/>coastal_flood_warning<br/>high_surf_advisory<br/>rip_current_statement]
+    
+    DevicesDB[(devices.json<br/>Device Registry)]
+    
+    %% Main Process
+    Start([System Startup])
+    LoadConfig[Load Configuration<br/>settings.json devices.json]
+    GetMAC[Get Device MAC Address<br/>from wlan0]
+    Timer{Check Timer<br/>15 seconds}
+    
+    CallService[HTTP GET to<br/>Device Service API]
+    AudioCheck[Check Audio Updates<br/>manifest.json]
+    DownloadAudio[Download Updated<br/>Audio Files if needed]
+    
+    ParseResponse{Parse Alert<br/>Response}
+    DetermineLevel[Determine Alert Level<br/>SAFE/CAUTION/DANGER]
+    
+    WriteLEDSignal[Write to<br/>/tmp/led_control_signal<br/>PATTERN:color]
+    PlayAudio[Play Audio via mpg123<br/>normal/caution/high_alert.mp3]
+    
+    LogStatus[Log Check Status<br/>Timestamp Level Location]
+    Sleep[Sleep until next check]
+    
+    %% LED Service
+    LEDStart([LED Service Start])
+    LEDLock{Acquire Process<br/>Lock?}
+    LEDExit1[Exit - Another<br/>Instance Running]
+    
+    InitHardware{Initialize<br/>Hardware?}
+    ImportLib[Import rpi_ws281x]
+    InitStrips[Initialize 3 LED Strips:<br/>Red GPIO 18<br/>Yellow GPIO 21<br/>Green GPIO 13]
+    HardwareOK[hardware_available = true]
+    HardwareFail[hardware_available = false<br/>Simulation Mode]
+    
+    LEDLoop{Monitor Loop<br/>Every 2 seconds}
+    ReadSignal[Read /tmp/led_control_signal]
+    ParseSignal{Parse Signal<br/>Type?}
+    
+    PatternRed[Blink Red Strip<br/>10 cycles 0.5s on/off]
+    PatternYellow[Blink Yellow Strip<br/>10 cycles 0.5s on/off]
+    PatternGreen[Blink Green Strip<br/>10 cycles 0.5s on/off]
+    PatternOff[Turn All Strips OFF]
+    
+    WriteStatus[Write Status to<br/>/tmp/led_service_status<br/>JSON with PID hardware level]
+    
+    %% Watchdog
+    WDStart([Watchdog Start])
+    WDLock{Acquire Process<br/>Lock?}
+    WDExit[Exit - Another<br/>Instance Running]
+    
+    StartAll[Start All Processes:<br/>LED Service<br/>Main Process<br/>Web Dashboard<br/>Auto-Updater]
+    
+    WDLoop{Monitor Loop<br/>Every 60 seconds}
+    CheckProc{Check Each<br/>Process}
+    ProcRunning{Is Process<br/>Running?}
+    RestartCount{Restart<br/>Count less than 5?}
+    RestartProc[Restart Process]
+    IncCount[Increment Restart Count]
+    Cooldown[Wait for Cooldown]
+    WDLog[Log Watchdog Status]
+    
+    %% Auto-Updater
+    AUStart([Auto-Updater Start])
+    AULock{Acquire Process<br/>Lock?}
+    AUExit[Exit - Another<br/>Instance Running]
+    
+    AULoop{Update Loop<br/>Every 120 seconds}
+    FetchCommit[Fetch Latest Commit<br/>from GitHub API]
+    CompareCommit{Current vs<br/>Latest Commit?}
+    NoUpdate[No Update Needed]
+    
+    StopWeb[Stop Web Dashboard]
+    Backup[Create Backup<br/>.tar in backup/]
+    GitPull[git pull origin main]
+    PullSuccess{Pull<br/>Successful?}
+    RestartWeb[Restart Web Dashboard]
+    UpdateFail[Log Update Failure<br/>Continue with Old Code]
+    HealthCheck[Health Check<br/>Web Dashboard]
+    
+    %% Web Dashboard
+    WebStart([Web Dashboard Start])
+    FlaskInit[Initialize Flask App<br/>Port 5000]
+    LoadData[Load System Data:<br/>LED Status<br/>Device Config<br/>Git Info]
+    
+    Routes{HTTP Routes}
+    RootRoute[GET /<br/>HTML Dashboard]
+    StatusRoute[GET /status<br/>JSON API]
+    HealthRoute[GET /health<br/>Health Check]
+    
+    IPCheck{Verify IP<br/>Allowed?}
+    Serve403[HTTP 403 Forbidden]
+    ServeData[Serve Response]
+    
+    %% File System
+    LEDSignal["File: /tmp/led_control_signal"]
+    LEDStatus["File: /tmp/led_service_status"]
+    LEDLog["File: /tmp/led_service.log"]
+    LEDLockFile["File: /tmp/led_service.lock"]
+    WDLockFile["File: .watchdog.lock"]
+    AULockFile["File: .updater.lock"]
+    LocalConfig["Config Files:<br/>devices.json<br/>settings.json"]
+    
+    %% Hardware
+    RedLED["Red LED Strip<br/>GPIO 18 Channel 0<br/>48 LEDs - DANGER"]
+    YellowLED["Yellow LED Strip<br/>GPIO 21 Channel 0<br/>48 LEDs - CAUTION"]
+    GreenLED["Green LED Strip<br/>GPIO 13 Channel 1<br/>48 LEDs - SAFE"]
+    Speaker["Audio Output<br/>mpg123 player"]
+    
+    %% Main Flow Connections
+    Start --> LoadConfig
+    LoadConfig --> GetMAC
+    GetMAC --> Timer
+    Timer -->|15s elapsed| AudioCheck
+    AudioCheck --> DownloadAudio
+    DownloadAudio --> CallService
+    CallService --> ParseResponse
+    ParseResponse --> DetermineLevel
+    DetermineLevel --> WriteLEDSignal
+    WriteLEDSignal --> PlayAudio
+    PlayAudio --> LogStatus
+    LogStatus --> Sleep
+    Sleep --> Timer
+    
+    %% Service API Flow
+    CallService --> DeviceAPI
+    DeviceAPI --> DeviceLogic
+    DeviceLogic --> DevicesDB
+    DevicesDB --> DeviceMode
+    DeviceMode -->|TEST| TestScenario
+    DeviceMode -->|LIVE| LiveAlert
+    LiveAlert --> NWS
+    NWS --> DeviceResponse
+    TestScenario --> DeviceResponse
+    DeviceResponse --> ParseResponse
+    
+    %% LED Service Flow
+    LEDStart --> LEDLock
+    LEDLock -->|Success| InitHardware
+    LEDLock -->|Failed| LEDExit1
+    InitHardware -->|Try| ImportLib
+    ImportLib -->|Success| InitStrips
+    InitStrips -->|Success| HardwareOK
+    InitStrips -->|Error| HardwareFail
+    ImportLib -->|Error| HardwareFail
+    HardwareOK --> LEDLoop
+    HardwareFail --> LEDLoop
+    
+    LEDLoop --> ReadSignal
+    ReadSignal --> LEDSignal
+    ReadSignal --> ParseSignal
+    ParseSignal -->|PATTERN:RED| PatternRed
+    ParseSignal -->|PATTERN:YELLOW| PatternYellow
+    ParseSignal -->|PATTERN:GREEN| PatternGreen
+    ParseSignal -->|OFF| PatternOff
+    
+    PatternRed --> RedLED
+    PatternYellow --> YellowLED
+    PatternGreen --> GreenLED
+    
+    PatternRed --> WriteStatus
+    PatternYellow --> WriteStatus
+    PatternGreen --> WriteStatus
+    PatternOff --> WriteStatus
+    WriteStatus --> LEDStatus
+    WriteStatus --> LEDLoop
+    
+    %% Watchdog Flow
+    WDStart --> WDLock
+    WDLock -->|Success| StartAll
+    WDLock -->|Failed| WDExit
+    StartAll --> WDLoop
+    WDLoop --> CheckProc
+    CheckProc --> ProcRunning
+    ProcRunning -->|Yes| WDLog
+    ProcRunning -->|No| RestartCount
+    RestartCount -->|Yes| RestartProc
+    RestartCount -->|No| Cooldown
+    RestartProc --> IncCount
+    IncCount --> WDLog
+    Cooldown --> WDLog
+    WDLog --> WDLoop
+    
+    %% Auto-Updater Flow
+    AUStart --> AULock
+    AULock -->|Success| AULoop
+    AULock -->|Failed| AUExit
+    AULoop --> FetchCommit
+    FetchCommit --> GitHub
+    GitHub --> CompareCommit
+    CompareCommit -->|Different| StopWeb
+    CompareCommit -->|Same| NoUpdate
+    StopWeb --> Backup
+    Backup --> GitPull
+    GitPull --> GitHub
+    GitPull --> PullSuccess
+    PullSuccess -->|Yes| RestartWeb
+    PullSuccess -->|No| UpdateFail
+    UpdateFail --> RestartWeb
+    RestartWeb --> HealthCheck
+    HealthCheck --> NoUpdate
+    NoUpdate --> AULoop
+    
+    %% Web Dashboard Flow
+    WebStart --> FlaskInit
+    FlaskInit --> LoadData
+    LoadData --> LEDStatus
+    LoadData --> LocalConfig
+    LoadData --> Routes
+    Routes --> RootRoute
+    Routes --> StatusRoute
+    Routes --> HealthRoute
+    RootRoute --> IPCheck
+    StatusRoute --> IPCheck
+    HealthRoute --> IPCheck
+    IPCheck -->|Allowed| ServeData
+    IPCheck -->|Denied| Serve403
+    
+    %% Audio Flow
+    AudioCheck --> AzureBlob
+    AzureBlob --> DownloadAudio
+    PlayAudio --> Speaker
+    
+    %% Lock Files
+    LEDLock -.->|Creates| LEDLockFile
+    WDLock -.->|Creates| WDLockFile
+    AULock -.->|Creates| AULockFile
+    
+    %% Watchdog manages all processes
+    StartAll -.->|Starts & Monitors| LEDStart
+    StartAll -.->|Starts & Monitors| Start
+    StartAll -.->|Starts & Monitors| WebStart
+    StartAll -.->|Starts & Monitors| AUStart
+    
+    %% Styling
+    classDef external fill:#e1f5ff,stroke:#0288d1,stroke-width:2px
+    classDef azure fill:#fff3e0,stroke:#f57c00,stroke-width:2px
+    classDef process fill:#e8f5e9,stroke:#388e3c,stroke-width:2px
+    classDef hardware fill:#fce4ec,stroke:#c2185b,stroke-width:2px
+    classDef file fill:#f3e5f5,stroke:#7b1fa2,stroke-width:2px
+    classDef decision fill:#fff9c4,stroke:#f57f17,stroke-width:2px
+    
+    class NWS,NOAA,GitHub,AzureBlob external
+    class DeviceAPI,MockAPI,DevicesDB azure
+    class Start,LEDStart,WDStart,AUStart,WebStart process
+    class RedLED,YellowLED,GreenLED,Speaker hardware
+    class LEDSignal,LEDStatus,LEDLog,LEDLockFile,WDLockFile,AULockFile,LocalConfig file
+    class Timer,DeviceLogic,DeviceMode,ParseResponse,ParseSignal,LEDLock,WDLock,AULock,InitHardware,ProcRunning,RestartCount,CompareCommit,PullSuccess,IPCheck,CheckProc decision

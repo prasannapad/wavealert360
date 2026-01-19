@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>WaveAlert360 Audio Generator Dashboard - Test</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; background-color: #f5f5f5; }
+        .header { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 20px; border-radius: 10px; margin-bottom: 20px; }
+        .status-card { background: white; border-radius: 10px; padding: 20px; margin-bottom: 15px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        .success { border-left: 5px solid #28a745; }
+        .no-changes { border-left: 5px solid #6c757d; }
+        .error { border-left: 5px solid #dc3545; }
+        .timestamp { color: #666; font-size: 0.9em; }
+        .details { margin: 10px 0; }
+        .files-updated { background: #e8f5e8; padding: 10px; border-radius: 5px; margin: 10px 0; }
+        .refresh-info { background: #e3f2fd; padding: 15px; border-radius: 5px; margin-bottom: 20px; }
+    </style>
+    <script>
+        // Convert UTC timestamps to browser timezone and show "X minutes ago"
+        function formatTimestamp(utcTimestamp) {
+            const date = new Date(utcTimestamp);
+            const now = new Date();
+            const diffMs = now - date;
+            const diffMins = Math.floor(diffMs / (1000 * 60));
+            
+            // Format in browser timezone
+            const localTime = date.toLocaleTimeString([], {
+                hour: '2-digit', 
+                minute: '2-digit',
+                timeZoneName: 'short'
+            });
+            
+            // Show "X minutes ago"
+            let timeAgo;
+            if (diffMins < 1) {
+                timeAgo = "just now";
+            } else if (diffMins === 1) {
+                timeAgo = "1 minute ago";
+            } else if (diffMins < 60) {
+                timeAgo = `${diffMins} minutes ago`;
+            } else {
+                const hours = Math.floor(diffMins / 60);
+                timeAgo = hours === 1 ? "1 hour ago" : `${hours} hours ago`;
+            }
+            
+            return `${localTime} (${timeAgo})`;
+        }
+        
+        // Update all timestamps when page loads
+        document.addEventListener('DOMContentLoaded', function() {
+            const timestampElements = document.querySelectorAll('.utc-timestamp');
+            timestampElements.forEach(function(element) {
+                const utcTime = element.getAttribute('data-utc');
+                element.textContent = element.textContent.replace('[TIMESTAMP]', formatTimestamp(utcTime));
+            });
+            
+            // Update current time in header
+            const headerTime = document.getElementById('current-time');
+            if (headerTime) {
+                const now = new Date();
+                headerTime.textContent = now.toLocaleString([], {
+                    timeZoneName: 'short'
+                });
+            }
+        });
+    </script>
+</head>
+<body>
+    <div class="header">
+        <h1>🎵 WaveAlert360 Audio Generator Dashboard</h1>
+        <p>Last Hour Execution History | Current Time: <span id="current-time">Loading...</span></p>
+        <p>⏱️ Runs every 3 minutes | 🔄 Auto-refresh in 30 seconds</p>
+    </div>
+    
+    <div class="refresh-info">
+        <strong>📊 Live Monitoring:</strong> This dashboard shows the execution history for the last hour. 
+        The Azure Function runs every 3 minutes to check for changes in alert settings and generate new audio files when needed.
+    </div>
+
+    <!-- Test data with UTC timestamps -->
+    <div class="status-card success">
+        <div class="timestamp utc-timestamp" data-utc="2024-12-19T20:45:00.000Z">✅ [TIMESTAMP]</div>
+        <div class="details">Successfully generated audio files - Changes detected: high_changed: True</div>
+        <div class="files-updated">
+            <strong>📁 Files Updated:</strong> device/alert_audio/high_alert.mp3
+        </div>
+    </div>
+
+    <div class="status-card no-changes">
+        <div class="timestamp utc-timestamp" data-utc="2024-12-19T20:42:00.000Z">⏭️ [TIMESTAMP]</div>
+        <div class="details">No changes detected in alert settings</div>
+    </div>
+
+    <div class="status-card success">
+        <div class="timestamp utc-timestamp" data-utc="2024-12-19T20:39:00.000Z">✅ [TIMESTAMP]</div>
+        <div class="details">Successfully generated audio files - Changes detected: normal_changed: True</div>
+        <div class="files-updated">
+            <strong>📁 Files Updated:</strong> device/alert_audio/normal_alert.mp3
+        </div>
+    </div>
+
+    <div class="status-card no-changes">
+        <div class="timestamp utc-timestamp" data-utc="2024-12-19T20:36:00.000Z">⏭️ [TIMESTAMP]</div>
+        <div class="details">No changes detected in alert settings</div>
+    </div>
+
+</body>
+</html>

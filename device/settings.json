@@ -1,0 +1,168 @@
+{
+  "location": {
+    "latitude": 37.421035,
+    "longitude": -122.434162,
+    "name": "Cowell Ranch State Beach, Half Moon Bay, CA"
+  },
+  "system": {
+    "check_interval": 15,
+    "audio_dir": "alert_audio",
+    "request_timeout": 10,
+    "user_agent": "WaveAlert360/1.0 (github.com/prpadm/wavealert360)",
+    "audio_player_command": "bluetoothctl connect 3C:39:E7:BC:52:40 && sleep 2 && cvlc --intf dummy --play-and-exit"
+  },
+  "azure": {
+    "region": "westus2",
+    "output_format": "audio-16khz-128kbitrate-mono-mp3",
+    "user_agent": "WaveAlert360",
+    "request_timeout": 30,
+    "voices": {
+      "normal": "en-US-AriaNeural",
+      "caution": "en-US-AriaNeural",
+      "high_alert": "en-US-DavisNeural"
+    },
+    "styles": {
+      "normal": "friendly",
+      "caution": "newscast",
+      "high_alert": "urgent"
+    },
+    "speaking_rate": "medium"
+  },
+  "audio_files": {
+    "normal": "normal_alert.mp3",
+    "caution_alert": "caution_alert.mp3",
+    "high_alert": "high_alert.mp3"
+  },
+  "api": {
+    "mock_mode": true,
+    "mock_base": "https://wavealert360-mock-api-dev.azurewebsites.net/api",
+    "nws_template": "https://api.weather.gov/alerts/active?point={lat},{lon}",
+    "mock_template": "https://wavealert360-mock-api-dev.azurewebsites.net/api/alerts/active?point={lat},{lon}&scenario=normal_conditions"
+  },
+  "mock_scenarios": {
+    "normal": "normal_conditions",
+    "high_surf": "high_surf_advisory", 
+    "flood": "coastal_flood_warning",
+    "multiple": "multiple_hazards",
+    "storm": "tropical_storm_krosa",
+    "rip_current": "rip_current_california"
+  },
+  "alert_types": {
+    "NORMAL": {
+      "triggers": [],
+      "led_pattern": "🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢",
+      "message_type": "Normal Conditions",
+      "audio_file": "normal_alert.mp3",
+      "audio_text": "Welcome to Cowell Ranch State Beach in Half Moon Bay. Be aware of rip currents and sneaker waves. Never turn your back on the ocean and supervise children closely. Please stay alert and enjoy the beach.",
+      "console_message": "✅ Normal conditions - No active coastal hazards detected"
+    },
+    "MEDIUM": {
+      "triggers": [
+        "Coastal Flood Advisory",
+        "High Surf Advisory",
+        "Rip Current Statement",
+        "Beach Hazards Statement"
+      ],
+      "led_pattern": "🟡🟡🟡🟡🟡🟡🟡🟡🟡🟡",
+      "message_type": "CAUTION - Elevated Beach Hazards",
+      "audio_file": "caution_alert.mp3",
+      "audio_text": "Caution! Dangerous surf conditions are in effect at Cowell Ranch State Beach and along the Half Moon Bay coastline. Strong rip currents, powerful waves, and sneaker waves are possible. Stay well back from the water’s edge. Do not stand on rocks or jetties. This is a remote beach with no lifeguard services. Keep children close, remain alert at all times, and never turn your back on the ocean.",
+      "console_message": "⚠️ CAUTION: Elevated beach hazards - advisories in effect"
+    },
+    "HIGH": {
+      "triggers": [
+        "High Surf Warning",
+        "Coastal Flood Warning",
+        "Special Weather Statement"
+      ],
+      "led_pattern": "🔴🔴🔴🔴🔴🔴🔴🔴🔴🔴",
+      "message_type": "HIGH ALERT - Coastal Hazard Detected",
+      "audio_file": "high_alert.mp3",
+      "audio_text": "Danger! There is currently a sneaker wave warning here at Cowell Ranch State Beach. People have been seriously injured or killed by sneaker waves at this beach, they can strike without warning and drag you into cold ocean waters. Do not go near the water. Stay off rocks and jetties. Never turn your back on the ocean!",
+      "console_message": "🚨 HIGH ALERT: {hazard_type} detected!"
+    }
+  },
+  "auto_updater": {
+    "repository": {
+      "owner": "prasannapad",
+      "name": "wavealert360",
+      "url": "https://github.com/prasannapad/wavealert360.git",
+      "branch": "main"
+    },
+    "update_settings": {
+      "check_interval": 120,
+      "enabled": true,
+      "backup_enabled": true,
+      "github_api_timeout": 10,
+      "user_agent": "WaveAlert360-AutoUpdater"
+    },
+    "deployment": {
+      "production_path": "/home/pi/WaveAlert360",
+      "main_script_path": "device/main.py",
+      "restart_delay": 5,
+      "graceful_shutdown_timeout": 10
+    },
+    "logging": {
+      "level": "INFO",
+      "file": "auto_update.log",
+      "rotation_days": 7,
+      "max_size_mb": 10
+    },
+    "safety": {
+      "max_consecutive_failures": 5,
+      "rollback_on_failure": true,
+      "health_check_enabled": true,
+      "emergency_stop_file": ".emergency_stop",
+      "manual_mode_file": ".manual_mode"
+    },
+    "maintenance_window": {
+      "start_hour": null,
+      "end_hour": null
+    }
+  }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

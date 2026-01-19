@@ -1,0 +1,57 @@
+graph TB
+    %% Main Actors and Systems
+    Developer[👨‍💻 WaveAlert360 Developer<br/>Code Development]
+    Operator[👤 WaveAlert360 Operator<br/>County/State Parks]
+    GitHub[📦 GitHub Repository<br/>Code & Config Storage]
+    Pi[🖥️ WaveAlert360 Beach Alert Device<br/>Raspberry Pi]
+    Azure[☁️ WaveAlert360 Service<br/>Device Service API<br/>Microsoft Azure Function]
+    NWS[🌊 NWS API<br/>Weather Alerts]
+    LED[💡 LED Strips<br/>Red Yellow Green]
+    Speaker[🔊 Speaker<br/>Audio Alerts]
+    
+    %% Power System
+    Solar[☀️ Solar Panel<br/>20W Polycrystalline]
+    Battery[🔋 LiFePO4 Battery<br/>12V 20Ah]
+    PowerReg[⚡ Power Regulator<br/>5V USB Output]
+    
+    %% Developer Interactions
+    Developer -->|Push Code Updates| GitHub
+    Developer -->|Deploy Infrastructure| Azure
+    
+    %% Operator Interactions
+    Operator -->|Update Config<br/>devices.json| GitHub
+    Operator -->|Monitor Dashboard| Pi
+    
+    %% GitHub to Pi
+    GitHub -->|Auto-Pull Updates<br/>Every 2 min| Pi
+    
+    %% Power Flow
+    Solar -.->|Charge| Battery
+    Battery -->|12V DC| PowerReg
+    PowerReg -->|5V USB| Pi
+    PowerReg -->|Power| Speaker
+    
+    %% Pi Internal Flow
+    Pi -->|1. GET /api/alert/MAC| Azure
+    Azure -->|2. Fetch Alerts| NWS
+    NWS -->|3. Return Alert Data| Azure
+    Azure -->|4. Return Alert Level<br/>SAFE/CAUTION/DANGER| Pi
+    Pi -->|5. Control GPIO| LED
+    Pi -->|6. Play Audio| Speaker
+    
+    %% Styling
+    classDef developer fill:#e1f5ff,stroke:#01579b,stroke-width:3px
+    classDef operator fill:#fff3e0,stroke:#e65100,stroke-width:3px
+    classDef cloud fill:#fce4ec,stroke:#c2185b,stroke-width:3px
+    classDef device fill:#e8f5e9,stroke:#388e3c,stroke-width:3px
+    classDef hardware fill:#f3e5f5,stroke:#7b1fa2,stroke-width:3px
+    classDef external fill:#fff9c4,stroke:#f57f17,stroke-width:3px
+    classDef power fill:#fff8e1,stroke:#f57c00,stroke-width:3px
+    
+    class Developer developer
+    class Operator operator
+    class GitHub,Azure cloud
+    class Pi device
+    class LED,Speaker hardware
+    class NWS external
+    class Solar,Battery,PowerReg power

@@ -1,0 +1,56 @@
+# WaveAlert360 Python Dependencies
+# ================================
+# Complete dependency list for the coastal hazard detection system
+
+# ========== PRODUCTION DEPENDENCIES ==========
+# Required for core WaveAlert360 functionality
+
+# HTTP requests for NWS API and GitHub API
+requests>=2.31.0
+
+# Web dashboard framework
+flask>=3.0.0
+flask-cors>=4.0.0
+
+# Audio playback (cross-platform)
+pygame>=2.5.0
+
+# Date parsing (for alert timestamps)
+python-dateutil>=2.8.0
+
+# Fix for Darwin dependency parsing warning  
+send2trash>=1.8.2
+
+# ========== RASPBERRY PI DEPENDENCIES ==========
+# LED control (only works on Raspberry Pi with GPIO)
+# These will fail gracefully on other systems
+
+# NeoPixel LED control for Raspberry Pi
+adafruit-circuitpython-neopixel>=6.3.0
+rpi_ws281x>=4.3.0
+
+# Raspberry Pi GPIO control (pre-installed on Pi OS)
+# RPi.GPIO>=0.7.1         # Usually pre-installed on Pi OS
+
+# ========== DEVELOPMENT DEPENDENCIES (OPTIONAL) ==========
+# Install these only for development work
+# Usage: pip install -r requirements.txt
+# For development: pip install -r requirements.txt && pip install pytest black flake8
+
+# Testing frameworks
+# pytest>=7.4.0           # Unit testing framework
+# pytest-cov>=4.1.0       # Test coverage reporting
+# pytest-mock>=3.11.0     # Mocking for tests
+
+# Code quality tools
+# black>=23.0.0            # Code formatting
+# flake8>=6.0.0           # Linting
+# mypy>=1.5.0             # Type checking
+
+# Development utilities
+# ipython>=8.14.0         # Enhanced Python shell
+# jupyter>=1.0.0          # Notebook environment (for analysis)
+
+# Optional: Advanced audio processing for testing
+# pydub>=0.25.1           # Audio manipulation and testing
+# simpleaudio>=1.0.4      # Alternative audio testing

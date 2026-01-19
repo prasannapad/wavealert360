@@ -1,0 +1,69 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"label": "Run WaveAlert360",
+			"type": "shell",
+			"command": "cmd",
+			"args": [
+				"/c",
+				"\".venv\\Scripts\\python.exe\"",
+				"device\\main.py"
+			],
+			"group": "build",
+			"isBackground": false,
+			"problemMatcher": []
+		},
+		{
+			"label": "Test WaveAlert Single Run",
+			"type": "shell",
+			"command": "cmd",
+			"args": [
+				"/c",
+				"\".venv\\Scripts\\python.exe\"",
+				"device\\test_main.py"
+			],
+			"group": "test",
+			"isBackground": false,
+			"problemMatcher": []
+		},
+		{
+			"label": "Search Coastal Alerts",
+			"type": "shell",
+			"command": "cmd",
+			"args": [
+				"/c",
+				"\".venv\\Scripts\\python.exe\"",
+				"device\\coastal_alert_search.py"
+			],
+			"group": "test",
+			"isBackground": false,
+			"problemMatcher": []
+		},
+		{
+			"label": "Save NWS Data",
+			"type": "shell",
+			"command": "cmd",
+			"args": [
+				"/c",
+				"\".venv\\Scripts\\python.exe\"",
+				"device\\save_nws_data.py"
+			],
+			"group": "test",
+			"isBackground": false,
+			"problemMatcher": []
+		},
+		{
+			"label": "Test Phase 3 LED Controller",
+			"type": "shell",
+			"command": "cmd",
+			"args": [
+				"/c",
+				"\".venv\\Scripts\\python.exe\"",
+				"device\\test_led_controller.py"
+			],
+			"isBackground": false,
+			"group": "test"
+		}
+	]
+}

@@ -1,0 +1,18 @@
+{
+  "fetched_at": "2025-08-18T12:33:58.882422",
+  "total_alerts": 1,
+  "coastal_alerts_count": 1,
+  "coastal_alerts": [
+    {
+      "event": "Beach Hazards Statement",
+      "headline": "Beach Hazards Statement issued August 18 at 2:20PM EDT until August 18 at 9:00PM EDT by NWS Gaylord MI",
+      "areas": "Cheboygan; Presque Isle",
+      "severity": "Moderate",
+      "urgency": "Expected",
+      "certainty": "Likely",
+      "effective": "2025-08-18T14:20:00-04:00",
+      "expires": "2025-08-18T21:00:00-04:00",
+      "description": "* WHAT...Dangerous swimming conditions are expected due to high\nwaves of 3 to 6 feet and rip currents.\n\n* WHERE...Lake Huron Beaches of Cheboygan and Presque Isle\nCounties.\n\n* WHEN...Through early thi..."
+    }
+  ]
+}

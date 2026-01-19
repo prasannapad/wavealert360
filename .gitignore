@@ -1,0 +1,129 @@
+# WaveAlert360 .gitignore
+# Prevent sensitive and unnecessary files from being committed
+
+# Environment variables and secrets
+.env
+*.key
+config_secrets.py
+*_with_key.bat
+
+# Temporary analysis and test files
+analyze_*.py
+check_*.py
+fetch_*.py
+quick_*.py
+
+# Duplicate audio files in root
+/*.mp3
+
+# Runtime files
+audio_text_hashes.json
+
+# Python cache and compiled files
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+share/python-wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# Virtual environments
+.venv/
+venv/
+ENV/
+env/
+
+# IDE files
+.vscode/settings.json
+.vscode/launch.json
+*.swp
+*.swo
+*~
+
+# OS files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Temporary files
+*.tmp
+*.bak
+*.old
+comparative_test.py
+run_test.bat
+
+# Audio generation temporary files
+temp_audio/
+*.wav.tmp
+
+# Logs
+*.log
+logs/
+
+# Azure Functions local dev files
+local.settings.json
+.python_packages/
+
+# Test coverage
+.coverage
+htmlcov/
+.pytest_cache/
+
+# Auto-updater and system files
+.auto_updater.lock
+.watchdog.lock
+.updater_health
+
+# Backup files
+backup/*.tar
+
+# Temporary and test files
+commit_msg.txt
+config_old.py
+config_fixed.py
+fix_leds.py
+update_leds.py
+test_edit.txt
+test_main.py
+test_setup.py
+test_led_demo.py
+
+# Audio generation files
+gen_audio.py
+generate_audio.bat
+generate_audio.ps1
+quick_audio.py
+simple_audio_gen.py
+alert_audio/high_alert_script.txt
+alert_audio/normal_alert_script.txt
+
+# API test and utility files
+nws_api_test.py
+quick_nws_test.py
+coastal_alert_search.py
+save_nws_data.py
+simple_test.py
+
+# Duplicate reference files
+nws_alerts_reference.json
+nws_api_analysis.md

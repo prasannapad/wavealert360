@@ -1,0 +1,49 @@
+{
+  "devices": [
+    {
+      "mac_address": "88:a2:9e:0d:fb:17",
+      "display_name": "Cowell Ranch State Beach Parking Lot",
+      "location_name": "Cowell Ranch State Beach",
+      "lat": 37.421035,
+      "lon": -122.434162,
+      "nws_zone": "CAZ529",
+      "operating_mode": "TEST",
+      "test_scenario": "DANGER",
+      "audio_files": {
+        "SAFE": "https://raw.githubusercontent.com/prasannapad/wavealert360/main/device/alert_audio/normal_alert.mp3",
+        "CAUTION": "https://raw.githubusercontent.com/prasannapad/wavealert360/main/device/alert_audio/caution_alert.mp3",
+        "DANGER": "https://raw.githubusercontent.com/prasannapad/wavealert360/main/device/alert_audio/high_alert.mp3"
+      }
+    },
+    {
+      "mac_address": "b8:27:eb:12:34:56",
+      "display_name": "Cowell Ranch State Beach Main Near Beach Access Steps",
+      "location_name": "Cowell Ranch State Beach",
+      "lat": 37.421035,
+      "lon": -122.434162,
+      "nws_zone": "CAZ529",
+      "operating_mode": "LIVE",
+      "test_scenario": "CAUTION",
+      "audio_files": {
+        "SAFE": "https://raw.githubusercontent.com/prasannapad/wavealert360/main/device/alert_audio/normal_alert.mp3",
+        "CAUTION": "https://raw.githubusercontent.com/prasannapad/wavealert360/main/device/alert_audio/caution_alert.mp3",
+        "DANGER": "https://raw.githubusercontent.com/prasannapad/wavealert360/main/device/alert_audio/high_alert.mp3"
+      }
+    },
+    {
+      "mac_address": "dc:a6:32:ab:cd:ef",
+      "display_name": "Mavericks Lookout",
+      "location_name": "Mavericks Beach",
+      "lat": 37.493313,
+      "lon": -122.504025,
+      "nws_zone": "CAZ529",
+      "operating_mode": "LIVE",
+      "test_scenario": "SAFE",
+      "audio_files": {
+        "SAFE": "https://raw.githubusercontent.com/prasannapad/wavealert360/main/device/alert_audio/normal_alert.mp3",
+        "CAUTION": "https://raw.githubusercontent.com/prasannapad/wavealert360/main/device/alert_audio/caution_alert.mp3",
+        "DANGER": "https://raw.githubusercontent.com/prasannapad/wavealert360/main/device/alert_audio/high_alert.mp3"
+      }
+    }
+  ]
+}
