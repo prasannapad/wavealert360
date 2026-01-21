@@ -35,7 +35,7 @@ Many existing signs warn of general hazards ("Beware of Strong Waves" or "Danger
 
 ### A Smarter, Real-Time Approach
 
-WaveAlert360 is designed to move beyond static signage and into a modern, responsive, real-time safety system. By pulling live data from authoritative sources such as the National Weather Service (NWS) and NOAA, the system can detect elevated coastal risk conditions and dynamically activate visual and audio alerts at the shoreline. The image below shows what an installation of WaveAlert360 at Cowell Ranch State Beach could look like. With bright colored signage, flashing lights and real time audio alerts, the sign would be very effective at warning beachgoers as they down from the bluff to the beach below.
+WaveAlert360 is designed to move beyond static signage and into a modern, responsive, real-time safety system. By pulling live data from authoritative sources such as the National Weather Service (NWS) and NOAA, the system can detect elevated coastal risk conditions and dynamically activate visual and audio alerts at the shoreline. The image below shows what an installation of WaveAlert360 at Cowell Ranch State Beach could look like. With bright colored signage, flashing lights and real time audio alerts, the bright signage would be effective at warning beachgoers as they go down from the bluff to the beach below.
 
 ![What installation of WaveAlert360 at Cowell Ranch State Beach would look like](images/wa360imaginedsign.png)
 
@@ -322,6 +322,7 @@ You may obtain a copy of the License at
 Unless required by applicable law or agreed to in writing, software
 distributed under the License is distributed on an "AS IS" BASIS,
 WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+
 
 
 
