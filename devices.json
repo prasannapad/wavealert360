@@ -7,7 +7,7 @@
       "lat": 37.421035,
       "lon": -122.434162,
       "nws_zone": "CAZ529",
-      "operating_mode": "TEST",
+      "operating_mode": "LIVE",
       "test_scenario": "CAUTION",
       "audio_files": {
         "SAFE": "https://raw.githubusercontent.com/prasannapad/wavealert360/main/device/alert_audio/normal_alert.mp3",
