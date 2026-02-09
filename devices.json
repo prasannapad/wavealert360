@@ -8,7 +8,7 @@
       "lon": -122.434162,
       "nws_zone": "CAZ529",
       "operating_mode": "TEST",
-      "test_scenario": "DANGER",
+      "test_scenario": "CAUTION",
       "audio_files": {
         "SAFE": "https://raw.githubusercontent.com/prasannapad/wavealert360/main/device/alert_audio/normal_alert.mp3",
         "CAUTION": "https://raw.githubusercontent.com/prasannapad/wavealert360/main/device/alert_audio/caution_alert.mp3",
