@@ -464,9 +464,9 @@ def main():
                     hazard_level_map = {
                         "DANGER": "HIGH",
                         "CAUTION": "MEDIUM",
-                        "SAFE": None
+                        "SAFE": "NORMAL"
                     }
-                    hazard_level = hazard_level_map.get(scenario_level, None)
+                    hazard_level = hazard_level_map.get(scenario_level, "NORMAL")
                     
                     # Get alert config
                     alert_config = get_alert_config(has_hazards=has_hazards, hazard_level=hazard_level)
