@@ -486,6 +486,9 @@ def main():
                     # Start new LED pattern
                     flash_led(alert_config)
                     
+                    # Wait for LED pattern to activate before starting audio
+                    time.sleep(1.0)
+                    
                     # Play audio (blocks until complete)
                     play_audio(alert_config)
                     
