@@ -310,15 +310,6 @@ def get_auto_updater_safety():
     """Get auto-updater safety configuration"""
     return AUTO_UPDATER_CONFIG.get("safety", {})
 
-def load_demo_scenario(scenario_index=0):
-    """
-    Load demo scenario data from local JSON file.
-    Args:
-        scenario_index: Index of scenario in DEMO_SCENARIOS list
-def get_auto_updater_safety():
-    """Get auto-updater safety configuration"""
-    return AUTO_UPDATER_CONFIG.get("safety", {})
-
 # ========== Configuration Summary ==========
 def print_config_summary():
     """Print a summary of current configuration"""
