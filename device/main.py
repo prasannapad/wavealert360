@@ -126,7 +126,7 @@ def play_audio(alert_config):
             
             for cmd in audio_commands:
                 try:
-                    result = subprocess.run(cmd, env=env, timeout=30, 
+                    result = subprocess.run(cmd, env=env, timeout=120, 
                                           stderr=subprocess.DEVNULL, 
                                           stdout=subprocess.DEVNULL)
                     if result.returncode == 0:
