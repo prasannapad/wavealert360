@@ -78,7 +78,7 @@
       "led_pattern": "🔴🔴🔴🔴🔴🔴🔴🔴🔴🔴",
       "message_type": "HIGH ALERT - Coastal Hazard Detected",
       "audio_file": "high_alert.mp3",
-      "audio_text": "Danger! There is currently a sneaker wave warning here at Cowell Ranch State Beach. People have been seriously injured or killed by sneaker waves at this beach, they can strike without warning and drag you into cold ocean waters. Do not go near the water. Stay off rocks and jetties. Never turn your back on the ocean!",
+      "audio_text": "Hey folks! There is currently a sneaker wave warning here at Cowell Ranch State Beach. People have been seriously injured or killed by sneaker waves at this beach, they can strike without warning and drag you into cold ocean waters. Do not go near the water. Stay off rocks and jetties. Never turn your back on the ocean!",
       "console_message": "🚨 HIGH ALERT: {hazard_type} detected!"
     }
   },
@@ -121,6 +121,7 @@
     }
   }
 }
+
 
 
 
