@@ -471,12 +471,14 @@ def main():
                     # Get alert config
                     alert_config = get_alert_config(has_hazards=has_hazards, hazard_level=hazard_level)
                     
-                    # Play this scenario (LED blink + audio)
+                    # Start LED pattern first
                     flash_led(alert_config)
+                    
+                    # Play audio (blocks until complete)
                     play_audio(alert_config)
                     
-                    # Pause before next scenario
-                    print(f"⏸️  [DEMO] Pausing {pause_seconds} seconds before next scenario...")
+                    # Keep LEDs on for pause_seconds after audio finishes
+                    print(f"⏸️  [DEMO] Holding pattern {pause_seconds}s after audio...")
                     time.sleep(pause_seconds)
                 
                 print(f"\n✅ [DEMO] Complete cycle finished, will repeat on next check")
