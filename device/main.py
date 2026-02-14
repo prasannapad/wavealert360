@@ -480,6 +480,9 @@ def main():
                     except:
                         pass
                     
+                    # Set alert level for LED hardware control
+                    set_alert_level_for_leds(scenario_level)
+                    
                     # Start new LED pattern
                     flash_led(alert_config)
                     
