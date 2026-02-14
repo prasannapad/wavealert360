@@ -482,26 +482,12 @@ def main():
                     # Get alert config
                     alert_config = get_alert_config(has_hazards=has_hazards, hazard_level=hazard_level)
                     
-                    # Turn off LEDs from previous scenario
-                    LED_CONTROL_FILE = "/tmp/led_control_signal"
-                    try:
-                        with open(LED_CONTROL_FILE, 'w') as f:
-                            f.write("PATTERN:OFF")
-                        time.sleep(0.5)  # Brief pause to ensure LEDs turn off
-                    except:
-                        pass
-                    
                     # Set alert level for LED hardware control
                     set_alert_level_for_leds(scenario_level)
                     
-                    # Start new LED pattern
+                    # Start LED pattern and audio simultaneously
                     flash_led(alert_config)
-                    
-                    # Wait for LED pattern to activate before starting audio
-                    time.sleep(1.0)
-                    
-                    # Play audio (blocks until complete)
-                    play_audio(alert_config)
+                    play_audio(alert_config)  # Blocks until audio finishes
                     
                     # Keep LEDs on for pause_seconds after audio finishes
                     print(f"⏸️  [DEMO] Holding pattern {pause_seconds}s after audio...")
