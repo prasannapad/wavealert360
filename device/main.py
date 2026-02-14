@@ -495,9 +495,9 @@ def main():
                 hazard_level_map = {
                     "DANGER": "HIGH",
                     "CAUTION": "MEDIUM",
-                    "SAFE": None
+                    "SAFE": "NORMAL"
                 }
-                hazard_level = hazard_level_map.get(alert_level, None)
+                hazard_level = hazard_level_map.get(alert_level, "NORMAL")
                 
                 # Set alert level for LED hardware control
                 print(f"🚦 [LED] Setting alert level to: {alert_level} at {datetime.now().isoformat()}")
