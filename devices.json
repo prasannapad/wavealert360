@@ -9,6 +9,7 @@
       "nws_zone": "CAZ529",
       "operating_mode": "LIVE",
       "test_scenario": "SAFE",
+      "demo_pause_seconds": 3,
       "audio_files": {
         "SAFE": "https://raw.githubusercontent.com/prasannapad/wavealert360/main/device/alert_audio/normal_alert.mp3",
         "CAUTION": "https://raw.githubusercontent.com/prasannapad/wavealert360/main/device/alert_audio/caution_alert.mp3",
@@ -24,6 +25,7 @@
       "nws_zone": "CAZ529",
       "operating_mode": "LIVE",
       "test_scenario": "CAUTION",
+      "demo_pause_seconds": 3,
       "audio_files": {
         "SAFE": "https://raw.githubusercontent.com/prasannapad/wavealert360/main/device/alert_audio/normal_alert.mp3",
         "CAUTION": "https://raw.githubusercontent.com/prasannapad/wavealert360/main/device/alert_audio/caution_alert.mp3",
@@ -39,6 +41,7 @@
       "nws_zone": "CAZ529",
       "operating_mode": "LIVE",
       "test_scenario": "SAFE",
+      "demo_pause_seconds": 3,
       "audio_files": {
         "SAFE": "https://raw.githubusercontent.com/prasannapad/wavealert360/main/device/alert_audio/normal_alert.mp3",
         "CAUTION": "https://raw.githubusercontent.com/prasannapad/wavealert360/main/device/alert_audio/caution_alert.mp3",

@@ -1,0 +1,58 @@
+{
+  "@context": [
+    "https://geojson.org/geojson-ld/geojson-context.jsonld",
+    {
+      "@version": "1.1"
+    }
+  ],
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "id": "https://api.weather.gov/alerts/demo-caution-1",
+      "type": "Feature",
+      "geometry": null,
+      "properties": {
+        "@id": "https://api.weather.gov/alerts/demo-caution-1",
+        "@type": "wx:Alert",
+        "id": "demo-caution-1",
+        "areaDesc": "Coastal San Mateo",
+        "geocode": {
+          "SAME": ["006081"],
+          "UGC": ["CAZ509"]
+        },
+        "affectedZones": [
+          "https://api.weather.gov/zones/forecast/CAZ509"
+        ],
+        "references": [],
+        "sent": "2026-02-14T08:00:00-08:00",
+        "effective": "2026-02-14T08:00:00-08:00",
+        "onset": "2026-02-14T08:00:00-08:00",
+        "expires": "2026-02-14T20:00:00-08:00",
+        "ends": "2026-02-14T20:00:00-08:00",
+        "status": "Actual",
+        "messageType": "Alert",
+        "category": "Met",
+        "severity": "Moderate",
+        "certainty": "Likely",
+        "urgency": "Expected",
+        "event": "High Surf Advisory",
+        "sender": "w-nws.webmaster@noaa.gov",
+        "senderName": "NWS San Francisco CA",
+        "headline": "High Surf Advisory issued February 14 at 8:00AM PST until February 14 at 8:00PM PST by NWS San Francisco CA",
+        "description": "Large breaking waves of 15 to 20 feet are expected along west and northwest facing beaches. Dangerous swimming and surfing conditions with strong rip currents. Large waves can sweep people off jetties and rocks and over harbor breakwalls.",
+        "instruction": "Inexperienced swimmers should remain out of the water. Stay well back from the water's edge and be alert for large waves.",
+        "response": "Avoid",
+        "parameters": {
+          "AWIPSidentifier": ["CFWMTR"],
+          "WMOidentifier": ["WHXX00 KMTR"],
+          "NWSheadline": ["HIGH SURF ADVISORY IN EFFECT UNTIL 8 PM PST THIS EVENING"],
+          "BLOCKCHANNEL": ["CMAS", "EAS", "NWEM"],
+          "VTEC": ["/O.NEW.KMTR.SU.Y.0003.260214T1600Z-260215T0400Z/"],
+          "eventEndingTime": ["2026-02-14T20:00:00-08:00"]
+        }
+      }
+    }
+  ],
+  "title": "Current Coastal Alerts - Demo Mode",
+  "updated": "2026-02-14T12:00:00+00:00"
+}

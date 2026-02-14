@@ -192,17 +192,53 @@ def get_alert(req: func.HttpRequest) -> func.HttpResponse:
     if device['operating_mode'] == 'TEST':
         alert_level = device['test_scenario']
         logging.info(f"Device {mac_address} in TEST mode: {alert_level}")
+        
+        response_data = {
+            "alert_level": alert_level,
+            "led_color": COLOR_MAP[alert_level],
+            "audio_url": device['audio_files'][alert_level],
+            "timestamp": datetime.now(timezone.utc).isoformat(),
+            "device_mode": device['operating_mode']
+        }
+        
+    elif device['operating_mode'] == 'DEMO':
+        logging.info(f"Device {mac_address} in DEMO mode - returning cycle config")
+        
+        response_data = {
+            "alert_level": "DEMO",
+            "device_mode": "DEMO",
+            "demo_pause_seconds": device.get('demo_pause_seconds', 3),
+            "scenarios": [
+                {
+                    "alert_level": "SAFE",
+                    "led_color": "GREEN",
+                    "audio_url": device['audio_files']['SAFE']
+                },
+                {
+                    "alert_level": "CAUTION",
+                    "led_color": "YELLOW",
+                    "audio_url": device['audio_files']['CAUTION']
+                },
+                {
+                    "alert_level": "DANGER",
+                    "led_color": "RED",
+                    "audio_url": device['audio_files']['DANGER']
+                }
+            ],
+            "timestamp": datetime.now(timezone.utc).isoformat()
+        }
+        
     else:  # LIVE mode
         alert_level = get_nws_alert_level(device)
         logging.info(f"Device {mac_address} in LIVE mode: {alert_level} (from NWS)")
-    
-    response_data = {
-        "alert_level": alert_level,
-        "led_color": COLOR_MAP[alert_level],
-        "audio_url": device['audio_files'][alert_level],
-        "timestamp": datetime.now(timezone.utc).isoformat(),
-        "device_mode": device['operating_mode']
-    }
+        
+        response_data = {
+            "alert_level": alert_level,
+            "led_color": COLOR_MAP[alert_level],
+            "audio_url": device['audio_files'][alert_level],
+            "timestamp": datetime.now(timezone.utc).isoformat(),
+            "device_mode": device['operating_mode']
+        }
     
     return func.HttpResponse(
         json.dumps(response_data),

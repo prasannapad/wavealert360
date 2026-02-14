@@ -265,7 +265,20 @@ def fetch_device_alert():
     service_response = call_azure_service()
 
     if service_response:
-        # Successfully got response from Azure service - wrap it properly
+        # Check if this is DEMO mode response (has scenarios array)
+        if service_response.get("device_mode") == "DEMO":
+            return {
+                "status": "success",
+                "alert_level": "DEMO",
+                "demo_config": service_response,  # Pass entire config
+                "device_config": {
+                    "display_name": "WaveAlert360 Device",
+                    "location_name": "Cowell Ranch State Beach",
+                    "operating_mode": "DEMO"
+                }
+            }
+        
+        # Regular LIVE or TEST mode response
         return {
             "status": "success",
             "alert_level": service_response.get("alert_level", "SAFE"),
@@ -393,7 +406,7 @@ def main():
     Path(audio_full_path).mkdir(exist_ok=True)
     print(f"🎵 Audio directory: {audio_full_path}")
     
-    # Import MOCK_MODE to show which API mode we're using
+    # Import mode settings to show which API mode we're using
     from helpers import MOCK_MODE, MOCK_API_BASE
     if MOCK_MODE:
         print(f"🧪 [MOCK MODE] Using test API: {MOCK_API_BASE}")
@@ -422,45 +435,86 @@ def main():
         
         if device_alert and device_alert.get("status") == "success":
             alert_level = device_alert.get("alert_level", "SAFE")
-            display_text = device_alert.get("display_text", "No information available")
-            audio_url = device_alert.get("audio_url")
             device_config = device_alert.get("device_config", {})
+            operating_mode = device_config.get('operating_mode', 'Unknown')
             
-            print(f"🎯 [DEVICE] {display_text}")
             print(f"🏷️  [CONFIG] Device: {device_config.get('display_name', 'Unknown')}")
             print(f"📍 [LOCATION] {device_config.get('location_name', 'Unknown')}")
-            print(f"🔧 [MODE] {device_config.get('operating_mode', 'Unknown')}")
+            print(f"🔧 [MODE] {operating_mode}")
             
-            # Determine if this is a hazard condition
-            has_hazards = alert_level in ["CAUTION", "DANGER"]
-            
-            # Map alert levels to hazard levels for configuration
-            hazard_level_map = {
-                "DANGER": "HIGH",
-                "CAUTION": "MEDIUM",
-                "SAFE": None
-            }
-            hazard_level = hazard_level_map.get(alert_level, None)
-            
-            # Set alert level for LED hardware control
-            print(f"🚦 [LED] Setting alert level to: {alert_level} at {datetime.now().isoformat()}")
-            set_alert_level_for_leds(alert_level)
-            
-            # Get appropriate alert configuration from centralized config
-            alert_config = get_alert_config(has_hazards=has_hazards, hazard_level=hazard_level)
-            
-            # Override audio file if service provides audio URL
-            if audio_url:
-                print(f"🎵 [AUDIO] Using service audio: {audio_url}")
-                # TODO: Download and play service audio
-            
-            # Display alerts and trigger actions
-            if has_hazards:
-                flash_led(alert_config)                  # Flash LEDs using centralized config
-                play_audio(alert_config)                 # Play audio using centralized config
+            # ===== DEMO MODE: Cycle through all scenarios =====
+            if alert_level == "DEMO":
+                demo_config = device_alert.get("demo_config", {})
+                scenarios = demo_config.get("scenarios", [])
+                pause_seconds = demo_config.get("demo_pause_seconds", 3)
+                
+                print(f"🎭 [DEMO] Starting cycling demo with {len(scenarios)} scenarios")
+                print(f"⏸️  [DEMO] {pause_seconds}s pause between scenarios")
+                
+                for scenario in scenarios:
+                    scenario_level = scenario.get("alert_level")
+                    audio_url = scenario.get("audio_url")
+                    
+                    print(f"\n{'='*60}")
+                    print(f"🎭 [DEMO] Scenario: {scenario_level}")
+                    print(f"{'='*60}")
+                    
+                    # Map to internal hazard levels
+                    has_hazards = scenario_level in ["CAUTION", "DANGER"]
+                    hazard_level_map = {
+                        "DANGER": "HIGH",
+                        "CAUTION": "MEDIUM",
+                        "SAFE": None
+                    }
+                    hazard_level = hazard_level_map.get(scenario_level, None)
+                    
+                    # Get alert config
+                    alert_config = get_alert_config(has_hazards=has_hazards, hazard_level=hazard_level)
+                    
+                    # Play this scenario (LED blink + audio)
+                    flash_led(alert_config)
+                    play_audio(alert_config)
+                    
+                    # Pause before next scenario
+                    print(f"⏸️  [DEMO] Pausing {pause_seconds} seconds before next scenario...")
+                    time.sleep(pause_seconds)
+                
+                print(f"\n✅ [DEMO] Complete cycle finished, will repeat on next check")
+                
+            # ===== LIVE or TEST MODE: Single alert =====
             else:
-                flash_led(alert_config)                  # Flash LEDs using centralized config  
-                play_audio(alert_config)                 # Play audio using centralized config
+                display_text = device_alert.get("display_text", "No information available")
+                audio_url = device_alert.get("audio_url")
+                
+                print(f"🎯 [DEVICE] {display_text}")
+                
+                # Determine if this is a hazard condition
+                has_hazards = alert_level in ["CAUTION", "DANGER"]
+                
+                # Map alert levels to hazard levels for configuration
+                hazard_level_map = {
+                    "DANGER": "HIGH",
+                    "CAUTION": "MEDIUM",
+                    "SAFE": None
+                }
+                hazard_level = hazard_level_map.get(alert_level, None)
+                
+                # Set alert level for LED hardware control
+                print(f"🚦 [LED] Setting alert level to: {alert_level} at {datetime.now().isoformat()}")
+                set_alert_level_for_leds(alert_level)
+                
+                # Get appropriate alert configuration from centralized config
+                alert_config = get_alert_config(has_hazards=has_hazards, hazard_level=hazard_level)
+                
+                # Override audio file if service provides audio URL
+                if audio_url:
+                    print(f"🎵 [AUDIO] Using service audio: {audio_url}")
+                    # TODO: Download and play service audio
+                
+                # Display alerts and trigger actions
+                flash_led(alert_config)
+                play_audio(alert_config)
+                
         else:
             print("❌ [ERROR] Unable to get device alert status")
             print("🔄 [SYSTEM] Continuing with next check...")

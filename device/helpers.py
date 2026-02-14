@@ -68,6 +68,7 @@ def call_azure_service():
     """
     Call Azure Function service to get device alert status.
     Returns device alert response or None if service unavailable.
+    Caches successful responses for offline use.
     """
     try:
         # Import here to avoid circular import issues
@@ -94,13 +95,70 @@ def call_azure_service():
         print(f"✅ [SERVICE] Response: {service_response.get('alert_level', 'Unknown')} alert")
         print(f"📋 [SERVICE] Full response: {json.dumps(service_response, indent=2)}")
         
+        # Cache successful response for offline use
+        cache_azure_response(service_response)
+        
         return service_response
         
     except Exception as e:
         import traceback
         print(f"❌ [SERVICE] Azure Function call failed: {e}")
         print(f"📍 [SERVICE] Error details: {traceback.format_exc()}")
-        print(f"⚠️  [SERVICE] Will trigger FALLBACK to local NWS API")
+        print(f"⚠️  [SERVICE] Attempting to load cached config...")
+        
+        # Try to load cached config
+        cached_config = load_cached_config()
+        if cached_config:
+            return cached_config
+        
+        print(f"⚠️  [SERVICE] No cache available, will trigger FALLBACK to local NWS API")
+        return None
+
+def cache_azure_response(response):
+    """
+    Cache Azure service response for offline use.
+    Args:
+        response: Dictionary response from Azure service
+    """
+    try:
+        import os
+        script_dir = os.path.dirname(os.path.abspath(__file__))
+        cache_file = os.path.join(script_dir, '.azure_cache.json')
+        
+        with open(cache_file, 'w') as f:
+            json.dump(response, f, indent=2)
+        
+        print(f"💾 [CACHE] Saved Azure response to cache")
+        
+    except Exception as e:
+        print(f"⚠️  [CACHE] Failed to cache response: {e}")
+
+def load_cached_config():
+    """
+    Load cached Azure service response for offline operation.
+    Returns:
+        Cached response dict or None if cache doesn't exist
+    """
+    try:
+        import os
+        script_dir = os.path.dirname(os.path.abspath(__file__))
+        cache_file = os.path.join(script_dir, '.azure_cache.json')
+        
+        if not os.path.exists(cache_file):
+            print(f"📁 [CACHE] No cache file found")
+            return None
+        
+        with open(cache_file, 'r') as f:
+            cached_data = json.load(f)
+        
+        print(f"✅ [CACHE] Loaded cached config (Last Known Good)")
+        print(f"📋 [CACHE] Operating mode: {cached_data.get('device_mode', 'Unknown')}")
+        print(f"🎯 [CACHE] Alert level: {cached_data.get('alert_level', 'Unknown')}")
+        
+        return cached_data
+        
+    except Exception as e:
+        print(f"❌ [CACHE] Failed to load cache: {e}")
         return None
 
 def get_api_url(lat, lon, scenario=None):
@@ -252,6 +310,15 @@ def get_auto_updater_safety():
     """Get auto-updater safety configuration"""
     return AUTO_UPDATER_CONFIG.get("safety", {})
 
+def load_demo_scenario(scenario_index=0):
+    """
+    Load demo scenario data from local JSON file.
+    Args:
+        scenario_index: Index of scenario in DEMO_SCENARIOS list
+def get_auto_updater_safety():
+    """Get auto-updater safety configuration"""
+    return AUTO_UPDATER_CONFIG.get("safety", {})
+
 # ========== Configuration Summary ==========
 def print_config_summary():
     """Print a summary of current configuration"""
@@ -267,5 +334,5 @@ def print_config_summary():
         repo = get_auto_updater_repo()
         print(f"📦 Update Repo: {repo.get('owner', 'N/A')}/{repo.get('name', 'N/A')}")
         print(f"⏰ Update Check: {get_auto_updater_check_interval()}s")
-    print(f"� Settings: settings.json only")
+    print(f"📋 Settings: settings.json only")
     print("=" * 45)

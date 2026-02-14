@@ -296,6 +296,7 @@ For detailed technical information:
 - **[Sequence Diagram](docs/SEQUENCE_DIAGRAM.md)** - Complete data flow from GitHub commit to LED change
 - **[System Flowchart](docs/SYSTEM_FLOWCHART.md)** - Internal component architecture and GPIO mappings
 - **[Operation Modes](docs/OPERATION_MODES.md)** - How to run the system (console vs dashboard mode)
+- **[Demo Mode](docs/DEMO_MODE.md)** - Offline presentation mode for trade shows and demos
 - **[PowerShell SSH Guide](docs/POWERSHELL_SSH_GUIDELINES.md)** - SSH from Windows troubleshooting
 - **[Development Context](docs/COPILOT_CONTEXT.md)** - Project history, design decisions, lessons learned
 
