@@ -115,11 +115,12 @@ def play_audio(alert_config):
             
             for cmd in audio_commands:
                 try:
+                    print(f"[AUDIO] {datetime.now().strftime('%H:%M:%S.%f')[:-3]} - Starting: {filename} (using {cmd[0]})")
                     result = subprocess.run(cmd, env=env, timeout=120, 
                                           stderr=subprocess.DEVNULL, 
                                           stdout=subprocess.DEVNULL)
+                    print(f"[AUDIO] {datetime.now().strftime('%H:%M:%S.%f')[:-3]} - Finished: {filename}")
                     if result.returncode == 0:
-                        print(f"[AUDIO] Playing: {filename} (using {cmd[0]})")
                         return
                 except (subprocess.TimeoutExpired, FileNotFoundError):
                     continue
