@@ -76,6 +76,7 @@ def play_audio(alert_config):
     """
     import os
     import subprocess
+    from mutagen.mp3 import MP3
     
     filename = alert_config["audio_file"]
     # Get the directory where this script is located
@@ -92,6 +93,15 @@ def play_audio(alert_config):
                     return
         except:
             pass  # If we can't read it as text, assume it's a real audio file
+        
+        # Get actual audio duration
+        try:
+            audio = MP3(path)
+            duration = audio.info.length
+            print(f"[AUDIO] {datetime.now().strftime('%H:%M:%S.%f')[:-3]} - Starting: {filename} ({duration:.1f}s)")
+        except:
+            duration = 45  # Default fallback
+            print(f"[AUDIO] {datetime.now().strftime('%H:%M:%S.%f')[:-3]} - Starting: {filename} (unknown duration)")
         
         # Use system audio player that works with Bluetooth
         try:
@@ -113,16 +123,20 @@ def play_audio(alert_config):
             env = os.environ.copy()
             env['PULSE_RUNTIME_PATH'] = env.get('PULSE_RUNTIME_PATH', '/run/user/1000/pulse')
             
+            # Start audio in background
             for cmd in audio_commands:
                 try:
-                    print(f"[AUDIO] {datetime.now().strftime('%H:%M:%S.%f')[:-3]} - Starting: {filename} (using {cmd[0]})")
-                    result = subprocess.run(cmd, env=env, timeout=120, 
-                                          stderr=subprocess.DEVNULL, 
-                                          stdout=subprocess.DEVNULL)
+                    process = subprocess.Popen(cmd, env=env, stderr=subprocess.DEVNULL, stdout=subprocess.DEVNULL)
+                    # Wait for actual audio duration instead of relying on process exit
+                    time.sleep(duration)
+                    # Kill process if still running
+                    try:
+                        process.kill()
+                    except:
+                        pass
                     print(f"[AUDIO] {datetime.now().strftime('%H:%M:%S.%f')[:-3]} - Finished: {filename}")
-                    if result.returncode == 0:
-                        return
-                except (subprocess.TimeoutExpired, FileNotFoundError):
+                    return
+                except FileNotFoundError:
                     continue
             
             print(f"[AUDIO] All players failed for: {filename}")
