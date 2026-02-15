@@ -485,8 +485,14 @@ def main():
                     # Set alert level for LED hardware control
                     set_alert_level_for_leds(scenario_level)
                     
-                    # Start LED pattern and audio simultaneously
+                    # Start LED pattern first
                     flash_led(alert_config)
+                    
+                    # Wait 2 seconds for LED to visibly change before starting audio
+                    print(f"⏸️  [DEMO] Waiting 2s for LED to change...")
+                    time.sleep(2.0)
+                    
+                    # Now start audio
                     play_audio(alert_config)  # Blocks until audio finishes
                     
                     # Keep LEDs on for pause_seconds after audio finishes
