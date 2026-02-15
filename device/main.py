@@ -77,17 +77,6 @@ def play_audio(alert_config):
     import os
     import subprocess
     
-    # Kill any existing audio players first to prevent overlap
-    try:
-        subprocess.run(['pkill', '-9', 'vlc'], stderr=subprocess.DEVNULL, stdout=subprocess.DEVNULL)
-        subprocess.run(['pkill', '-9', 'cvlc'], stderr=subprocess.DEVNULL, stdout=subprocess.DEVNULL)
-        subprocess.run(['pkill', '-9', 'ffplay'], stderr=subprocess.DEVNULL, stdout=subprocess.DEVNULL)
-        subprocess.run(['pkill', '-9', 'omxplayer'], stderr=subprocess.DEVNULL, stdout=subprocess.DEVNULL)
-        subprocess.run(['pkill', '-9', 'mpg123'], stderr=subprocess.DEVNULL, stdout=subprocess.DEVNULL)
-        time.sleep(0.2)  # Brief pause to ensure processes are killed
-    except:
-        pass
-    
     filename = alert_config["audio_file"]
     # Get the directory where this script is located
     script_dir = os.path.dirname(os.path.abspath(__file__))
