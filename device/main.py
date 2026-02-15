@@ -10,6 +10,7 @@
 import requests
 import time
 import os
+import shlex
 from datetime import datetime
 from pathlib import Path
 from helpers import (
@@ -76,9 +77,9 @@ def play_audio(alert_config):
     """
     import os
     import subprocess
-    from mutagen.mp3 import MP3
     
     filename = alert_config["audio_file"]
+    lock_fd = None
     # Get the directory where this script is located
     script_dir = os.path.dirname(os.path.abspath(__file__))
     path = os.path.join(script_dir, AUDIO_DIR, filename)
@@ -94,55 +95,102 @@ def play_audio(alert_config):
         except:
             pass  # If we can't read it as text, assume it's a real audio file
         
-        # Get actual audio duration
+        # Get actual audio duration (for logging only)
         try:
-            audio = MP3(path)
+            import importlib
+            mp3_module = importlib.import_module("mutagen.mp3")
+            audio = mp3_module.MP3(path)
             duration = audio.info.length
             print(f"[AUDIO] {datetime.now().strftime('%H:%M:%S.%f')[:-3]} - Starting: {filename} ({duration:.1f}s)")
         except:
-            duration = 45  # Default fallback
+            duration = None
             print(f"[AUDIO] {datetime.now().strftime('%H:%M:%S.%f')[:-3]} - Starting: {filename} (unknown duration)")
         
         # Use system audio player that works with Bluetooth
         try:
             abs_path = os.path.abspath(path)
-            
-            # Use configured audio player command from settings
-            configured_cmd = AUDIO_PLAYER_COMMAND.split() + [abs_path]
+            lock_file_path = '/tmp/wavealert_audio.lock'
+
+            # Serialize playback across processes to prevent overlapping audio.
+            lock_fd = os.open(lock_file_path, os.O_CREAT | os.O_RDWR, 0o666)
+            try:
+                import fcntl
+                fcntl.flock(lock_fd, fcntl.LOCK_EX)
+            except Exception:
+                # If file locking is unavailable, continue with best effort.
+                pass
+
+            # Run optional pre-play connection step only when explicitly configured.
+            try:
+                if 'bluetoothctl connect' in AUDIO_PLAYER_COMMAND:
+                    bt_mac = AUDIO_PLAYER_COMMAND.split('bluetoothctl connect', 1)[1].strip().split()[0]
+                    subprocess.run(
+                        ['bluetoothctl', 'connect', bt_mac],
+                        stderr=subprocess.DEVNULL,
+                        stdout=subprocess.DEVNULL,
+                        check=False
+                    )
+                    time.sleep(1.0)
+            except Exception:
+                pass
+
+            configured_cmd = []
+            if AUDIO_PLAYER_COMMAND and all(token not in AUDIO_PLAYER_COMMAND for token in ['&&', ';', '|']):
+                configured_cmd = shlex.split(AUDIO_PLAYER_COMMAND) + [abs_path]
+
+            # Prefer proven blocking players first.
             audio_commands = [
-                # Primary: Use configured command from settings.json
-                configured_cmd,
-                # Fallbacks if configured command fails
-                ['cvlc', '--intf', 'dummy', '--play-and-exit', abs_path],
+                ['mpg123', '-q', abs_path],
                 ['ffplay', '-nodisp', '-autoexit', '-loglevel', 'quiet', abs_path],
-                ['omxplayer', '-o', 'both', abs_path],
-                ['mpg123', abs_path]
+                ['cvlc', '--intf', 'dummy', '--play-and-exit', abs_path],
+                ['omxplayer', '-o', 'both', abs_path]
             ]
+            if configured_cmd:
+                audio_commands.insert(0, configured_cmd)
             
             # Preserve audio environment variables for Bluetooth
             env = os.environ.copy()
             env['PULSE_RUNTIME_PATH'] = env.get('PULSE_RUNTIME_PATH', '/run/user/1000/pulse')
             
-            # Start audio in background
+            # Run audio player in foreground and wait for true playback completion
             for cmd in audio_commands:
                 try:
-                    process = subprocess.Popen(cmd, env=env, stderr=subprocess.DEVNULL, stdout=subprocess.DEVNULL)
-                    # Wait for actual audio duration instead of relying on process exit
-                    time.sleep(duration)
-                    # Kill process if still running
-                    try:
-                        process.kill()
-                    except:
-                        pass
-                    print(f"[AUDIO] {datetime.now().strftime('%H:%M:%S.%f')[:-3]} - Finished: {filename}")
-                    return
+                    print(f"[AUDIO] Using player: {' '.join(cmd[:-1])}")
+                    result = subprocess.run(
+                        cmd,
+                        env=env,
+                        stderr=subprocess.DEVNULL,
+                        stdout=subprocess.DEVNULL,
+                        check=False
+                    )
+
+                    if result.returncode == 0:
+                        print(f"[AUDIO] {datetime.now().strftime('%H:%M:%S.%f')[:-3]} - Finished: {filename}")
+                        try:
+                            os.close(lock_fd)
+                        except Exception:
+                            pass
+                        return True
+
+                    print(f"[AUDIO] Player exited with code {result.returncode}, trying fallback...")
                 except FileNotFoundError:
+                    continue
+                except Exception as e:
+                    print(f"[AUDIO] Player error ({cmd[0]}): {e}")
                     continue
             
             print(f"[AUDIO] All players failed for: {filename}")
+            try:
+                os.close(lock_fd)
+            except Exception:
+                pass
             
         except Exception as e:
             print(f"[AUDIO] Error playing {filename}: {e}")
+            try:
+                os.close(lock_fd)
+            except Exception:
+                pass
             
         # Fallback to pygame if all system players fail
             
@@ -156,21 +204,47 @@ def play_audio(alert_config):
                 # Load and play the audio file
                 pygame.mixer.music.load(abs_path)
                 pygame.mixer.music.play()
-                print(f"[AUDIO] Playing: {filename}")
+                print(f"[AUDIO] Playing via pygame: {filename}")
+
+                while pygame.mixer.music.get_busy():
+                    time.sleep(0.1)
+
+                print(f"[AUDIO] {datetime.now().strftime('%H:%M:%S.%f')[:-3]} - Finished: {filename}")
+                try:
+                    os.close(lock_fd)
+                except Exception:
+                    pass
+                return True
                 
             except ImportError:
                 print(f"[AUDIO] pygame not installed. Install with: pip install pygame")
                 print(f"[AUDIO] Simulating: {filename}")
+                try:
+                    os.close(lock_fd)
+                except Exception:
+                    pass
+                return False
             except Exception as e:
                 print(f"[AUDIO] Error playing {filename}: {e}")
                 print(f"[AUDIO] Simulating: {filename}")
+                try:
+                    os.close(lock_fd)
+                except Exception:
+                    pass
+                return False
                 
         except Exception as e:
             print(f"[AUDIO] Error playing {filename}: {e}")
             print(f"[AUDIO] Simulating: {filename}")
+            try:
+                os.close(lock_fd)
+            except Exception:
+                pass
+            return False
     else:
         print(f"[AUDIO] File not found: {filename}")
         print(f"[AUDIO] Simulating: {filename}")
+        return False
 
 # ========== LED Control Integration ==========
 def flash_led(alert_config):
@@ -461,7 +535,7 @@ def main():
             if alert_level == "DEMO":
                 demo_config = device_alert.get("demo_config", {})
                 scenarios = demo_config.get("scenarios", [])
-                pause_seconds = demo_config.get("demo_pause_seconds", 3)
+                pause_seconds = 0
                 
                 print(f"🎭 [DEMO] Starting cycling demo with {len(scenarios)} scenarios")
                 print(f"⏸️  [DEMO] {pause_seconds}s pause between scenarios")
@@ -486,16 +560,6 @@ def main():
                     # Get alert config
                     alert_config = get_alert_config(has_hazards=has_hazards, hazard_level=hazard_level)
                     
-                    # Turn off LEDs from previous scenario
-                    LED_CONTROL_FILE = "/tmp/led_control_signal"
-                    try:
-                        with open(LED_CONTROL_FILE, 'w') as f:
-                            f.write("PATTERN:OFF")
-                        print(f"⚫ [DEMO] LEDs OFF")
-                        time.sleep(1.0)
-                    except:
-                        pass
-                    
                     # Set alert level for LED hardware control
                     set_alert_level_for_leds(scenario_level)
                     
@@ -503,17 +567,15 @@ def main():
                     flash_led(alert_config)
                     
                     # Wait for LED to visibly change before starting audio
-                    print(f"⏸️  [DEMO] Waiting 2s for LED to change to {scenario_level}...")
-                    time.sleep(2.0)
+                    print(f"⏸️  [DEMO] Waiting 1s for LED to change to {scenario_level}...")
+                    time.sleep(1.0)
                     
                     # Now start audio
                     play_audio(alert_config)  # Blocks until audio finishes
-                    
-                    # Keep LEDs on for pause_seconds after audio finishes
-                    print(f"⏸️  [DEMO] Holding pattern {pause_seconds}s after audio...")
-                    time.sleep(pause_seconds)
                 
                 print(f"\n✅ [DEMO] Complete cycle finished, will repeat on next check")
+                # In DEMO mode, restart cycle immediately to avoid end-of-loop idle gap.
+                continue
                 
             # ===== LIVE or TEST MODE: Single alert =====
             else:
@@ -547,6 +609,8 @@ def main():
                 
                 # Display alerts and trigger actions
                 flash_led(alert_config)
+                print(f"⏸️  [LIVE/TEST] Waiting 1s for LED to change to {alert_level}...")
+                time.sleep(1.0)
                 play_audio(alert_config)
                 
         else:

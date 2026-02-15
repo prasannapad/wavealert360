@@ -199,6 +199,8 @@ class BeachSignLEDManager:
                     return "QUIET"
                 elif control_mode.startswith("PATTERN:"):
                     pattern = control_mode.split(":", 1)[1]
+                    if pattern.upper() == "OFF":
+                        return "QUIET"
                     if "RED" in pattern.upper():
                         return "DANGER"
                     elif "YELLOW" in pattern.upper():
@@ -236,66 +238,76 @@ class BeachSignLEDManager:
         except:
             pass
 
+    def _sleep_interruptible(self, seconds, expected_level=None, check_interval=0.1):
+        """Sleep in small steps so control-file level changes are applied quickly."""
+        end_time = time.time() + seconds
+        while self.running and time.time() < end_time:
+            if expected_level is not None and self.get_alert_level() != expected_level:
+                return False
+            remaining = end_time - time.time()
+            time.sleep(min(check_interval, max(0.0, remaining)))
+        return True
+
     def run_alert_pattern(self, level):
         """Execute LED pattern based on alert level - only ONE strip active"""
         
         if level == "DANGER":
             # RED strip blinks - others OFF
             if self.hardware_available:
-                # Blink 10 times before checking alert level again
-                for cycle in range(10):
-                    self.set_strip_color(self.yellow_strip, COLORS['OFF'])
-                    if GREEN_STRIP_ENABLED and self.green_strip:
-                        self.set_strip_color(self.green_strip, COLORS['OFF'])
-                    
-                    self.set_strip_color(self.red_strip, COLORS['RED'])
-                    time.sleep(0.5)
+                self.set_strip_color(self.yellow_strip, COLORS['OFF'])
+                if GREEN_STRIP_ENABLED and self.green_strip:
+                    self.set_strip_color(self.green_strip, COLORS['OFF'])
+
+                self.set_strip_color(self.red_strip, COLORS['RED'])
+                if not self._sleep_interruptible(0.5, expected_level="DANGER"):
                     self.set_strip_color(self.red_strip, COLORS['OFF'])
-                    time.sleep(0.5)
+                    return
+                self.set_strip_color(self.red_strip, COLORS['OFF'])
+                self._sleep_interruptible(0.5, expected_level="DANGER")
             else:
                 print("🔴 [SIMULATION] RED strip: BLINKING (Danger)")
-                time.sleep(1.0)
+                self._sleep_interruptible(1.0, expected_level="DANGER")
 
         elif level == "CAUTION":
             # YELLOW strip blinks - others OFF
             if self.hardware_available:
-                # Blink 10 times before checking alert level again
-                for cycle in range(10):
-                    self.set_strip_color(self.red_strip, COLORS['OFF'])
-                    if GREEN_STRIP_ENABLED and self.green_strip:
-                        self.set_strip_color(self.green_strip, COLORS['OFF'])
-                    
-                    self.set_strip_color(self.yellow_strip, COLORS['YELLOW'])
-                    time.sleep(0.5)
+                self.set_strip_color(self.red_strip, COLORS['OFF'])
+                if GREEN_STRIP_ENABLED and self.green_strip:
+                    self.set_strip_color(self.green_strip, COLORS['OFF'])
+
+                self.set_strip_color(self.yellow_strip, COLORS['YELLOW'])
+                if not self._sleep_interruptible(0.5, expected_level="CAUTION"):
                     self.set_strip_color(self.yellow_strip, COLORS['OFF'])
-                    time.sleep(0.5)
+                    return
+                self.set_strip_color(self.yellow_strip, COLORS['OFF'])
+                self._sleep_interruptible(0.5, expected_level="CAUTION")
             else:
                 print("🟡 [SIMULATION] YELLOW strip: BLINKING (Caution)")
-                time.sleep(1.0)
+                self._sleep_interruptible(1.0, expected_level="CAUTION")
 
         elif level == "SAFE":
             # GREEN strip blinks - others OFF
             if self.hardware_available:
-                # Blink 10 times before checking alert level again
-                for cycle in range(10):
-                    self.set_strip_color(self.red_strip, COLORS['OFF'])
-                    self.set_strip_color(self.yellow_strip, COLORS['OFF'])
-                    
-                    if GREEN_STRIP_ENABLED and self.green_strip:
-                        self.set_strip_color(self.green_strip, COLORS['GREEN'])
-                        time.sleep(0.5)
+                self.set_strip_color(self.red_strip, COLORS['OFF'])
+                self.set_strip_color(self.yellow_strip, COLORS['OFF'])
+
+                if GREEN_STRIP_ENABLED and self.green_strip:
+                    self.set_strip_color(self.green_strip, COLORS['GREEN'])
+                    if not self._sleep_interruptible(0.5, expected_level="SAFE"):
                         self.set_strip_color(self.green_strip, COLORS['OFF'])
-                        time.sleep(0.5)
-                    else:
-                        # No green strip yet - keep all OFF for SAFE condition
-                        time.sleep(1.0)
+                        return
+                    self.set_strip_color(self.green_strip, COLORS['OFF'])
+                    self._sleep_interruptible(0.5, expected_level="SAFE")
+                else:
+                    # No green strip yet - keep all OFF for SAFE condition
+                    self._sleep_interruptible(1.0, expected_level="SAFE")
             else:
                 print(" [SIMULATION] GREEN strip: BLINKING (Safe)")
-                time.sleep(1.0)
+                self._sleep_interruptible(1.0, expected_level="SAFE")
         elif level == "QUIET":
             # Main system active - all strips OFF
             self.turn_off_all_strips()
-            time.sleep(1.0)
+            self._sleep_interruptible(1.0, expected_level="QUIET")
 
         elif level == "FAILSAFE":
             # Fail-safe: YELLOW strip blinks slowly
@@ -305,17 +317,19 @@ class BeachSignLEDManager:
                     self.set_strip_color(self.green_strip, COLORS['OFF'])
                 
                 self.set_strip_color(self.yellow_strip, COLORS['YELLOW'])
-                time.sleep(1.0)
+                if not self._sleep_interruptible(1.0, expected_level="FAILSAFE"):
+                    self.set_strip_color(self.yellow_strip, COLORS['OFF'])
+                    return
                 self.set_strip_color(self.yellow_strip, COLORS['OFF'])
-                time.sleep(1.0)
+                self._sleep_interruptible(1.0, expected_level="FAILSAFE")
             else:
                 print("⚠️  [SIMULATION] YELLOW strip: FAILSAFE BLINK")
-                time.sleep(2.0)
+                self._sleep_interruptible(2.0, expected_level="FAILSAFE")
 
         else:
             # Unknown - default to fail-safe
             self.turn_off_all_strips()
-            time.sleep(1.0)
+            self._sleep_interruptible(1.0)
 
     def signal_handler(self, signum, frame):
         """Handle shutdown signals"""
