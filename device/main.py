@@ -149,8 +149,11 @@ def play_audio(alert_config):
                 audio_commands.insert(0, configured_cmd)
             
             # Preserve audio environment variables for Bluetooth
+            # Critical: background daemons lack session vars needed for PipeWire/PulseAudio
             env = os.environ.copy()
-            env['PULSE_RUNTIME_PATH'] = env.get('PULSE_RUNTIME_PATH', '/run/user/1000/pulse')
+            env.setdefault('XDG_RUNTIME_DIR', '/run/user/1000')
+            env.setdefault('DBUS_SESSION_BUS_ADDRESS', 'unix:path=/run/user/1000/bus')
+            env.setdefault('PULSE_RUNTIME_PATH', '/run/user/1000/pulse')
             
             # Run audio player in foreground and wait for true playback completion
             for cmd in audio_commands:
