@@ -13,7 +13,7 @@ WaveAlert360 uses three independent WS2811/WS2812 addressable LED strips (48 LED
 │                      GPIO Pinout (Top View)                  │
 │                                                              │
 │   3V3  ●●  5V     Pin 1-2     Power Rails                   │
-│   GPIO2 ●●  5V    Pin 3-4     (5V for external LED power)   │
+│   GPIO2 ●●  5V    Pin 3-4     (5V for LED strip power)      │
 │   GPIO3 ●●  GND   Pin 5-6                                   │
 │   GPIO4 ●●  GPIO14 Pin 7-8                                  │
 │   GND   ●●  GPIO15 Pin 9-10                                 │
@@ -54,42 +54,41 @@ Pin 33 (GPIO 13) ────────────► GREEN Strip Data Pin
 Pin 6, 9, 14, etc ────────────► Common Ground (GND)
 (Any GND pin)                   Connect to all strip grounds
 
-External 5V PSU ──────────────► LED Strip Power (+5V)
-       │                        Do NOT power from Pi!
-       └─────────────────────► LED Strip Ground (GND)
+Pin 2 or 4 (5V) ──────────────► LED Strip Power (+5V)
+                                Powered directly from Pi 5V rail
+                                (Safe at low brightness, 1 strip active)
 ```
 
 ### Complete Wiring Schematic
 
 ```
-                    ┌─────────────────────┐
-                    │   5V Power Supply   │
-                    │   (5V, 10A+ rated)  │
-                    └──────┬────────┬─────┘
-                           │        │
-                          +5V      GND
-                           │        │
-        ┌──────────────────┼────────┼─────────────────┐
-        │                  │        │                  │
-        ▼                  ▼        ▼                  ▼
-    ┌──────┐          ┌──────┐  ┌──────┐         ┌──────┐
-    │ RED  │          │YELLOW│  │GREEN │         │ RPI  │
-    │Strip │          │Strip │  │Strip │         │ GND  │
-    │ 48   │          │ 48   │  │ 48   │         │ Pin  │
-    │ LEDs │          │ LEDs │  │ LEDs │         │ 6,9, │
-    └───┬──┘          └───┬──┘  └───┬──┘         │14,etc│
-        │                 │         │             └───┬──┘
-      Data               Data      Data               │
-        │                 │         │                 │
-        └─────────────────┴─────────┴─────────────────┘
-                          │         │                 │
-                    GPIO 18   GPIO 21          GPIO 13
-                     Pin 12    Pin 40           Pin 33
-                          │         │                 │
-                    ┌─────┴─────────┴─────────────────┴──┐
-                    │    Raspberry Pi Zero 2 W           │
-                    │    Running WaveAlert360            │
-                    └────────────────────────────────────┘
+                    ┌────────────────────────────────────────┐
+                    │        Raspberry Pi Zero 2 W           │
+                    │         Running WaveAlert360           │
+                    │                                        │
+                    │  5V (Pin 2/4)  GND (Pin 6/9/14/etc)   │
+                    │      │              │                  │
+                    │  GPIO18  GPIO21  GPIO13                │
+                    │  (Pin12) (Pin40) (Pin33)               │
+                    └────┬──────┬───────┬──────┬────────┬───┘
+                         │      │       │     +5V      GND
+                       Data    Data    Data    │        │
+                         │      │       │      │        │
+                         ▼      ▼       ▼      │        │
+                    ┌──────┐┌──────┐┌──────┐   │        │
+                    │ RED  ││YELLOW││GREEN │   │        │
+                    │Strip ││Strip ││Strip │   │        │
+                    │ 48   ││ 48   ││ 48   │   │        │
+                    │ LEDs ││ LEDs ││ LEDs │   │        │
+                    └──┬─┬─┘└──┬─┬─┘└──┬─┬─┘   │        │
+                     +5V GND +5V GND +5V GND   │        │
+                       │  │    │  │    │  │     │        │
+                       └──┼────┘──┼────┘──┼─────┘        │
+                          └───────┴───────┴──────────────┘
+
+    All LED strip +5V lines connect to Pi 5V (Pin 2 or 4)
+    All LED strip GND lines connect to Pi GND pins
+    Only ONE strip is active at any time (safe for Pi power)
 ```
 
 ## Hardware Specifications
@@ -100,7 +99,9 @@ External 5V PSU ──────────────► LED Strip Power (+
 - **Voltage**: 5V DC
 - **Data Protocol**: Single-wire PWM (800kHz)
 - **Color Order**: GRB (Green-Red-Blue)
-- **Current Draw**: ~2.8A per strip at full white brightness (48 LEDs × 60mA)
+- **Current Draw**: ~240mA per strip at operating brightness (48 LEDs × 20mA × 25%)
+  - Only ONE strip active at a time; safe for Pi 5V rail
+  - Full white max: ~2.8A per strip (48 LEDs × 60mA) — not used
 
 ### Raspberry Pi Configuration
 - **Model**: Raspberry Pi Zero 2 W
@@ -112,12 +113,13 @@ External 5V PSU ──────────────► LED Strip Power (+
 - **Library**: rpi_ws281x (C library with Python bindings)
 
 ### Power Supply Requirements
-- **Voltage**: 5V DC regulated
-- **Current**: Minimum 10A recommended for all three strips
-- **Wiring**: 
-  - Use appropriate gauge wire (16-18 AWG recommended)
-  - Keep power wires short to minimize voltage drop
-  - Connect ground between Pi and LED strips
+- **Power Source**: Raspberry Pi 5V rail (Pin 2 or Pin 4)
+- **Current Draw**: ~240mA max (one strip active at 25% brightness)
+- **Pi Power Adapter**: Use a quality 5V/2.5A+ USB adapter for the Pi
+- **Wiring**:
+  - Connect all strip +5V wires to Pi 5V pin (Pin 2 or 4)
+  - Connect all strip GND wires to Pi GND pins
+  - Keep wires short to minimize voltage drop
 
 ## Software Configuration
 
@@ -157,20 +159,20 @@ LED_INVERT = False
 
 ## Safety Notes
 
-⚠️ **Critical Safety Information**:
+⚠️ **Safety Information**:
 
-1. **Never power LED strips directly from Raspberry Pi 5V pins**
-   - Pi can supply max ~1.2A total
-   - LED strips can draw 8-10A at full brightness
-   - This will damage your Raspberry Pi!
+1. **Pi-powered LED strips are safe in this configuration**
+   - Only ONE strip is active at any time
+   - Brightness is set to 65/255 (~25%) — single color only
+   - Actual draw is ~240mA, well within Pi 5V rail capacity (~1.2A)
+   - If you increase brightness significantly or run multiple strips simultaneously, use an external 5V PSU instead
 
-2. **Use external 5V power supply**
-   - Rated for at least 10A continuous
-   - Quality regulated power supply recommended
-   - Connect LED strip power directly to external PSU
+2. **Use a quality Pi power adapter**
+   - 5V / 2.5A or higher USB power adapter recommended
+   - Ensures stable voltage for both Pi and LED strips
 
 3. **Common ground is essential**
-   - Connect Pi GND to LED strip GND
+   - All strip GND wires must connect to Pi GND pins
    - Ensures proper signal levels
    - Prevents ground loops
 
@@ -178,6 +180,10 @@ LED_INVERT = False
    - 330-470Ω resistor in series with data line
    - Protects GPIO pins from voltage spikes
    - Not strictly required for short runs
+
+5. **Do NOT increase LED_BRIGHTNESS above ~100 without an external PSU**
+   - Higher brightness or full white (all RGB channels) draws significantly more current
+   - At full brightness with all 3 strips: up to 8.4A — requires external supply
 
 ## Testing
 
@@ -200,9 +206,9 @@ sudo python3 device/turn_off_all_leds.py
 ## Troubleshooting
 
 ### LEDs Not Lighting Up
-1. Check power supply voltage (should be 5V)
-2. Verify data pin connections
-3. Ensure common ground between Pi and strips
+1. Verify Pi power adapter is 5V/2.5A+ (insufficient adapter = dim or dead LEDs)
+2. Verify data pin connections (GPIO 18, 21, 13)
+3. Ensure all strip GND wires connect to Pi GND pins
 4. Run with sudo (GPIO access requires root)
 5. Check if another process is using GPIO pins
 
@@ -212,10 +218,11 @@ sudo python3 device/turn_off_all_leds.py
 3. Adjust brightness if colors appear dim
 
 ### Flickering or Unstable
-1. Check power supply capacity
+1. Check Pi power adapter capacity (2.5A+ recommended)
 2. Minimize data wire length
-3. Add capacitor (1000µF) across power supply
+3. Add capacitor (100-470µF) across strip power/ground near the strip
 4. Check for loose connections
+5. If flickering persists, consider external 5V PSU for strips
 
 ## Physical Installation
 
@@ -242,7 +249,8 @@ sudo python3 device/turn_off_all_leds.py
 │                                        │
 └────────────────────────────────────────┘
 
-Raspberry Pi + Power Supply mounted in weatherproof enclosure on back
+Raspberry Pi mounted in weatherproof enclosure on back
+(LED strips powered from Pi 5V rail — no external PSU needed)
 ```
 
 ## References
