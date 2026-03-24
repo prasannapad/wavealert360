@@ -38,25 +38,27 @@ WaveAlert360 uses three independent WS2811/WS2812 addressable LED strips (48 LED
                                                              ▼
                (LEFT / Odd Pins)              (RIGHT / Even Pins)
          ┌─────────────────────┐        ┌─────────────────────┐
-   Pin 1 │  3V3 Power          │●      ●│  5V Power       ◄══│ Pin 2   ← +5V TO LED STRIPS
+   Pin 1 │  3V3 Power      ◄══ │●      ●│  5V Power       ◄══│ Pin 2   ← 🔴 Red wire → RED strip
+         │  ← 🟢 Red wire →    │        │                     │
+         │     GREEN strip      │        │                     │
          ├─────────────────────┤        ├─────────────────────┤
-   Pin 3 │  GPIO 2  (I2C SDA)  │●      ●│  5V Power       ◄══│ Pin 4   ← +5V TO LED STRIPS
+   Pin 3 │  GPIO 2  (I2C SDA)  │●      ●│  5V Power       ◄══│ Pin 4   ← 🟡 Red wire → YELLOW strip
          ├─────────────────────┤        ├─────────────────────┤
-   Pin 5 │  GPIO 3  (I2C SCL)  │●      ●│  Ground          ■ │ Pin 6   ← GND TO LED STRIPS
+   Pin 5 │  GPIO 3  (I2C SCL)  │●      ●│  Ground          ■ │ Pin 6   ← 🔴 White wire → RED strip
          ├─────────────────────┤        ├─────────────────────┤
    Pin 7 │  GPIO 4  (GPCLK0)   │●      ●│  GPIO 14 (UART TX) │ Pin 8
          ├─────────────────────┤        ├─────────────────────┤
    Pin 9 │  Ground          ■  │●      ●│  GPIO 15 (UART RX) │ Pin 10
          ├─────────────────────┤        ├─────────────────────┤
-  Pin 11 │  GPIO 17            │●      ●│  GPIO 18 (PWM0) ◄══│ Pin 12  ← 🔴 RED DATA
+  Pin 11 │  GPIO 17            │●      ●│  GPIO 18 (PWM0) ◄══│ Pin 12  ← 🔴 Green wire → RED strip
          ├─────────────────────┤        ├─────────────────────┤
-  Pin 13 │  GPIO 27            │●      ●│  Ground          ■ │ Pin 14  ← GND TO LED STRIPS
+  Pin 13 │  GPIO 27            │●      ●│  Ground          ■ │ Pin 14
          ├─────────────────────┤        ├─────────────────────┤
   Pin 15 │  GPIO 22            │●      ●│  GPIO 23            │ Pin 16
          ├─────────────────────┤        ├─────────────────────┤
   Pin 17 │  3V3 Power          │●      ●│  GPIO 24            │ Pin 18
          ├─────────────────────┤        ├─────────────────────┤
-  Pin 19 │  GPIO 10 (SPI MOSI) │●      ●│  Ground          ■ │ Pin 20  ← GND TO LED STRIPS
+  Pin 19 │  GPIO 10 (SPI MOSI) │●      ●│  Ground          ■ │ Pin 20
          ├─────────────────────┤        ├─────────────────────┤
   Pin 21 │  GPIO 9  (SPI MISO) │●      ●│  GPIO 25            │ Pin 22
          ├─────────────────────┤        ├─────────────────────┤
@@ -70,27 +72,36 @@ WaveAlert360 uses three independent WS2811/WS2812 addressable LED strips (48 LED
          ├─────────────────────┤        ├─────────────────────┤
   Pin 31 │  GPIO 6             │●      ●│  GPIO 12 (PWM0)     │ Pin 32
          ├─────────────────────┤        ├─────────────────────┤
-  Pin 33 │  GPIO 13 (PWM1) ◄══ │●      ●│  Ground          ■ │ Pin 34
-         │  ← 🟢 GREEN DATA    │        │                     │
+  Pin 33 │  GPIO 13 (PWM1) ◄══ │●      ●│  Ground          ■ │ Pin 34  ← 🟢 White wire → GREEN strip
+         │  ← 🟢 Green wire →  │        │                     │
+         │     GREEN strip      │        │                     │
          ├─────────────────────┤        ├─────────────────────┤
   Pin 35 │  GPIO 19 (PCM FS)   │●      ●│  GPIO 16            │ Pin 36
          ├─────────────────────┤        ├─────────────────────┤
   Pin 37 │  GPIO 26            │●      ●│  GPIO 20 (PCM DIN)  │ Pin 38
          ├─────────────────────┤        ├─────────────────────┤
-  Pin 39 │  Ground          ■  │●      ●│  GPIO 21 (PCM) ◄══ │ Pin 40
-         │                     │        │  ← 🟡 YELLOW DATA   │
+  Pin 39 │  Ground          ■  │●      ●│  GPIO 21 (PCM) ◄══ │ Pin 40  ← 🟡 Green wire → YELLOW strip
+         │  ← 🟡 White wire →  │        │                     │
+         │     YELLOW strip     │        │                     │
          └─────────────────────┘        └─────────────────────┘
 ```
 
 ### WaveAlert360 Pin Summary
 
-| Physical Pin | BCM GPIO | Function | WaveAlert360 Connection |
-|:---:|:---:|:---:|:---|
-| **2** or **4** | — | 5V Power | +5V to all LED strip power (from Pi rail) |
-| **6, 9, 14, 20, 25, 30, 34, 39** | — | Ground | GND to all LED strip grounds (use any/multiple) |
-| **12** | GPIO 18 | PWM0 | 🔴 RED strip data (48 LEDs — DANGER) |
-| **33** | GPIO 13 | PWM1 | 🟢 GREEN strip data (48 LEDs — SAFE) |
-| **40** | GPIO 21 | PCM DOUT | 🟡 YELLOW strip data (48 LEDs — CAUTION) |
+| Physical Pin | BCM GPIO | Function | Wire Color | LED Strip |
+|:---:|:---:|:---:|:---:|:---|
+| **1** | — | 3.3V Power | 🔴 Red wire | 🟢 GREEN strip +V power |
+| **2** | — | 5V Power | 🔴 Red wire | 🔴 RED strip +5V power |
+| **4** | — | 5V Power | 🔴 Red wire | 🟡 YELLOW strip +5V power |
+| **6** | — | Ground | ⚪ White wire | 🔴 RED strip GND |
+| **12** | GPIO 18 | PWM0 | 🟢 Green wire | 🔴 RED strip data (48 LEDs — DANGER) |
+| **33** | GPIO 13 | PWM1 | 🟢 Green wire | 🟢 GREEN strip data (48 LEDs — SAFE) |
+| **34** | — | Ground | ⚪ White wire | 🟢 GREEN strip GND |
+| **39** | — | Ground | ⚪ White wire | 🟡 YELLOW strip GND |
+| **40** | GPIO 21 | PCM DOUT | 🟢 Green wire | 🟡 YELLOW strip data (48 LEDs — CAUTION) |
+
+> **Note:** The GREEN strip is powered from Pin 1 (3.3V) instead of 5V.
+> This works at low brightness but the strip may appear slightly dimmer than the other two.
 
 ### LED Strip Wire Colors
 
@@ -109,61 +120,54 @@ Each WS2811/WS2812 LED strip has **3 wires**:
     │                   Raspberry Pi Zero 2 W                        │
     │                    Running WaveAlert360                        │
     │                                                                │
-    │   5V (Pin 2/4)    GND (Pin 6/9/14+)    GPIO Pins              │
-    └───────┬──────────────────┬──────────────┬────────┬────────┬────┘
-            │                  │              │        │        │
-            │                  │          GPIO 18  GPIO 13  GPIO 21
-            │                  │          (Pin 12) (Pin 33) (Pin 40)
-            │                  │              │        │        │
-            │                  │              │        │        │
-     ┌──────┴──────┐    ┌──────┴──────┐       │        │        │
-     │             │    │             │       │        │        │
-     │  ┌──────────┼────┼─────────────┼───────┼────────┼────────┘
-     │  │          │    │             │       │        │
-     │  │    ┌─────┼────┼─────────────┼───────┼────────┘
-     │  │    │     │    │             │       │
-     │  │    │  ┌──┼────┼─────────────┼───────┘
-     │  │    │  │  │    │             │
-     ▼  ▼    ▼  ▼  ▼    ▼             ▼
-    ┌──────────────────────────────────────────────────────────────┐
-    │                                                              │
-    │    🔴 RED STRIP (DANGER)        48 LEDs - GPIO 18            │
-    │    ┌─────────────────────────────────────────────────────┐   │
-    │    │  Red wire ──────► +5V  (from Pi Pin 2/4)            │   │
-    │    │  White wire ────► GND  (from Pi GND pin)            │   │
-    │    │  Green wire ────► DIN  (from Pi Pin 12 / GPIO 18)   │   │
-    │    └─────────────────────────────────────────────────────┘   │
-    │                                                              │
-    │    🟢 GREEN STRIP (SAFE)        48 LEDs - GPIO 13            │
-    │    ┌─────────────────────────────────────────────────────┐   │
-    │    │  Red wire ──────► +5V  (from Pi Pin 2/4)            │   │
-    │    │  White wire ────► GND  (from Pi GND pin)            │   │
-    │    │  Green wire ────► DIN  (from Pi Pin 33 / GPIO 13)   │   │
-    │    └─────────────────────────────────────────────────────┘   │
-    │                                                              │
-    │    🟡 YELLOW STRIP (CAUTION)    48 LEDs - GPIO 21            │
-    │    ┌─────────────────────────────────────────────────────┐   │
-    │    │  Red wire ──────► +5V  (from Pi Pin 2/4)            │   │
-    │    │  White wire ────► GND  (from Pi GND pin)            │   │
-    │    │  Green wire ────► DIN  (from Pi Pin 40 / GPIO 21)   │   │
-    │    └─────────────────────────────────────────────────────┘   │
-    │                                                              │
-    └──────────────────────────────────────────────────────────────┘
-
-    POWER FLOW:  USB adapter (5V/2.5A+) ──► Pi 5V rail ──► LED strips
-    IMPORTANT:   Only ONE LED strip is ever active at a time.
+    │  3.3V     5V      5V     GND     GPIO18   GPIO13   GND    GND     GPIO21  │
+    │ (Pin 1) (Pin 2) (Pin 4) (Pin 6)  (Pin 12) (Pin 33) (Pin 34) (Pin 39) (Pin 40) │
+    └───┬───────┬───────┬───────┬────────┬────────┬────────┬────────┬────────┬───┘
+        │       │       │       │        │        │        │        │        │
+        │       │       │       │        │        │        │        │        │
+   ┌────┼───────┼───────┼───────┼────────┼────────┼────────┼────────┼────────┼───┐
+   │    │       │       │       │        │        │        │        │        │   │
+   │    │    ┌──┴──┐    │    ┌──┴──┐  ┌──┴──┐  ┌──┴──┐  ┌──┴──┐  ┌──┴──┐  ┌──┴──┐│
+   │    │    │     │    │    │     │  │     │  │     │  │     │  │     │  │     ││
+   │    │    │ Red │    │    │White│  │Green│  │Green│  │White│  │White│  │Green││
+   │    │    │wire │    │    │wire │  │wire │  │wire │  │wire │  │wire │  │wire ││
+   │    │    └──┬──┘    │    └──┬──┘  └──┬──┘  └──┬──┘  └──┬──┘  └──┬──┘  └──┬──┘│
+   │    │       │       │       │        │        │        │        │        │   │
+   │    │       ▼       │       ▼        ▼        ▼        ▼        ▼        ▼   │
+   │    │  ╔════════╗   │  ╔════════╗╔════════╗╔════════╗╔════════╗╔════════╗╔════════╗│
+   │    │  │+5V PWR │   │  │  GND  ││  DATA  ││  DATA  ││  GND  ││  GND  ││  DATA  ││
+   │    │  ╚═══╤════╝   │  ╚═══╤════╝╚═══╤════╝╚═══╤════╝╚═══╤════╝╚═══╤════╝╚═══╤════╝│
+   │    │      │        │      │         │         │         │         │         │   │
+   │    │  ┌───┴────────┼──────┴─────────┴──┐  ┌───┴─────────┴──┐  ┌───┴─────────┴──┐│
+   │    │  │     🔴 RED STRIP (DANGER)      │  │ 🟢 GREEN STRIP │  │ 🟡 YELLOW STRIP││
+   │    │  │        48 LEDs                 │  │    (SAFE)       │  │   (CAUTION)    ││
+   │    │  │                                │  │   48 LEDs       │  │   48 LEDs      ││
+   │    │  │  Red wire ──► +5V  (Pin 2)     │  │                 │  │                ││
+   │    │  │  White wire─► GND  (Pin 6)     │  │  Red wire ──►   │  │  Red wire ──►  ││
+   │    │  │  Green wire─► DIN  (Pin 12)    │  │   +V (Pin 1)    │  │   +5V (Pin 4)  ││
+   │    │  │                                │  │  White wire─►   │  │  White wire─►  ││
+   │    │  │                                │  │   GND (Pin 34)  │  │   GND (Pin 39) ││
+   │    │  │                                │  │  Green wire─►   │  │  Green wire─►  ││
+   │    │  │                                │  │   DIN (Pin 33)  │  │   DIN (Pin 40) ││
+   │    │  └────────────────────────────────┘  └─────────────────┘  └────────────────┘│
+   │    │                                                                           │
+   └────┼───────────────────────────────────────────────────────────────────────────┘
+        │
+        │   POWER FLOW:  USB adapter (5V/2.5A+) ──► Pi ──► LED strips
+        │   IMPORTANT:   Only ONE LED strip is ever active at a time.
+        │
+        └── Pin 1 = 3.3V (GREEN strip), Pin 2 = 5V (RED strip), Pin 4 = 5V (YELLOW strip)
 ```
 
 ### Per-Strip Wiring Table
 
-| Strip | Red Wire (+5V) | White Wire (GND) | Green Wire (Data) |
+| Strip | Red Wire (Power) | White Wire (GND) | Green Wire (Data) |
 |:---|:---:|:---:|:---:|
-| 🔴 RED (DANGER) | Pi Pin 2 or 4 | Pi any GND pin | Pi Pin 12 (GPIO 18) |
-| 🟢 GREEN (SAFE) | Pi Pin 2 or 4 | Pi any GND pin | Pi Pin 33 (GPIO 13) |
-| 🟡 YELLOW (CAUTION) | Pi Pin 2 or 4 | Pi any GND pin | Pi Pin 40 (GPIO 21) |
+| 🔴 RED (DANGER) | Pi Pin 2 (5V) | Pi Pin 6 (GND) | Pi Pin 12 (GPIO 18) |
+| 🟢 GREEN (SAFE) | Pi Pin 1 (3.3V) | Pi Pin 34 (GND) | Pi Pin 33 (GPIO 13) |
+| 🟡 YELLOW (CAUTION) | Pi Pin 4 (5V) | Pi Pin 39 (GND) | Pi Pin 40 (GPIO 21) |
 
-> **Tip:** All three red wires can share the same 5V pin (Pin 2 or 4). Use separate GND pins
-> (e.g., Pin 6, Pin 14, Pin 34) for each strip to distribute current, or share one if convenient.
+> **Note:** Each strip uses its own dedicated power, ground, and data pin — no shared pins.
 
 ## Hardware Specifications
 
@@ -187,12 +191,14 @@ Each WS2811/WS2812 LED strip has **3 wires**:
 - **Library**: rpi_ws281x (C library with Python bindings)
 
 ### Power Supply Requirements
-- **Power Source**: Raspberry Pi 5V rail (Pin 2 or Pin 4)
+- **Power Source**: Raspberry Pi power rails
+  - Pin 2 (5V) → RED strip
+  - Pin 4 (5V) → YELLOW strip
+  - Pin 1 (3.3V) → GREEN strip
 - **Current Draw**: ~240mA max (one strip active at 25% brightness)
 - **Pi Power Adapter**: Use a quality 5V/2.5A+ USB adapter for the Pi
 - **Wiring**:
-  - Connect all strip +5V wires to Pi 5V pin (Pin 2 or 4)
-  - Connect all strip GND wires to Pi GND pins
+  - Each strip has dedicated power, ground, and data pins (no sharing)
   - Keep wires short to minimize voltage drop
 
 ## Software Configuration
