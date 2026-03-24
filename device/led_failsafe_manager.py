@@ -5,7 +5,7 @@ LED Service Manager - Three-Strip Beach Sign Version
 Controls 3 independent LED strips for beach alert system:
 - Strip 1 (GPIO 18): RED/DANGER alerts (48 LEDs)
 - Strip 2 (GPIO 21): YELLOW/CAUTION alerts (48 LEDs)
-- Strip 3 (GPIO 12): GREEN/SAFE alerts (48 LEDs) - FUTURE
+- Strip 3 (GPIO 13): GREEN/SAFE alerts (48 LEDs)
 
 Only ONE strip blinks at a time based on alert level.
 """
@@ -46,12 +46,12 @@ RED_STRIP_CHANNEL = 0
 
 # Strip 2: YELLOW/CAUTION (GPIO 21) 
 YELLOW_STRIP_PIN = 21
-YELLOW_STRIP_CHANNEL = 0  # Same channel OK for different GPIOs
+YELLOW_STRIP_CHANNEL = 0
 
-# Strip 3: GREEN/SAFE (GPIO 12) - FUTURE
+# Strip 3: GREEN/SAFE (GPIO 13)
 GREEN_STRIP_PIN = 13
-GREEN_STRIP_CHANNEL = 1  # Different channel from red/yellow (which use 0)
-GREEN_STRIP_ENABLED = True  # Set to True when third strip is installed
+GREEN_STRIP_CHANNEL = 1
+GREEN_STRIP_ENABLED = True
 
 # Common LED Settings
 LED_FREQ_HZ = 800000
@@ -134,7 +134,7 @@ class BeachSignLEDManager:
                 self.red_strip.begin()
                 print(f"✅ RED strip initialized (GPIO {RED_STRIP_PIN}, {LED_COUNT} LEDs)")
                 
-                # Initialize YELLOW strip (GPIO 21)
+                # Initialize YELLOW strip (GPIO 21) 
                 self.yellow_strip = PixelStrip(LED_COUNT, YELLOW_STRIP_PIN, LED_FREQ_HZ, LED_DMA,
                                               LED_INVERT, LED_BRIGHTNESS, YELLOW_STRIP_CHANNEL, strip_type)
                 self.yellow_strip.begin()

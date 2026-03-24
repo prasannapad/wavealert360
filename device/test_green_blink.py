@@ -10,7 +10,7 @@ LED_COUNT = 48
 LED_FREQ_HZ = 800000
 LED_DMA = 10
 LED_BRIGHTNESS = 255
-LED_CHANNEL = 1  # Channel 1 for GPIO 13
+LED_CHANNEL = 1
 
 print("Initializing green LED strip on GPIO 13...")
 strip = PixelStrip(LED_COUNT, GREEN_PIN, LED_FREQ_HZ, LED_DMA, False, LED_BRIGHTNESS, LED_CHANNEL)

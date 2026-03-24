@@ -14,5 +14,10 @@
         "**/node_modules": true,
         "**/bower_components": true,
         "**/*.code-search": true
+    },
+    "chat.tools.terminal.autoApprove": {
+        "git add": true,
+        "git commit": true,
+        "git push": true
     }
 }

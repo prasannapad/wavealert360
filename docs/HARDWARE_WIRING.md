@@ -293,7 +293,7 @@ sudo python3 device/turn_off_all_leds.py
 
 ### LEDs Not Lighting Up
 1. Verify Pi power adapter is 5V/2.5A+ (insufficient adapter = dim or dead LEDs)
-2. Verify data pin connections (GPIO 18, 21, 13)
+2. Verify data pin connections (GPIO 18, 13, 21)
 3. Ensure all strip GND wires connect to Pi GND pins
 4. Run with sudo (GPIO access requires root)
 5. Check if another process is using GPIO pins

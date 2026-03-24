@@ -1,10 +1,10 @@
 #!/usr/bin/env python3
-"""Simple test to blink the red LED strip"""
+"""Simple test to blink the RED LED strip - GPIO 18 (Pin 12)"""
 
 from rpi_ws281x import PixelStrip, Color
 import time
 
-# Red strip configuration
+# RED strip on GPIO 18, Channel 0
 RED_PIN = 18
 LED_COUNT = 48
 LED_FREQ_HZ = 800000
@@ -12,11 +12,11 @@ LED_DMA = 10
 LED_BRIGHTNESS = 255
 LED_CHANNEL = 0
 
-print("Initializing red LED strip...")
+print("Initializing RED LED strip on GPIO 18 (Pin 12)...")
 strip = PixelStrip(LED_COUNT, RED_PIN, LED_FREQ_HZ, LED_DMA, False, LED_BRIGHTNESS, LED_CHANNEL)
 strip.begin()
 
-print("Starting blink test (10 cycles)...")
+print("Starting RED blink test (10 cycles)...")
 for i in range(10):
     # All LEDs red
     for j in range(LED_COUNT):
