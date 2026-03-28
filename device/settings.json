@@ -66,7 +66,7 @@
       "led_pattern": "🟡🟡🟡🟡🟡🟡🟡🟡🟡🟡",
       "message_type": "CAUTION - Elevated Beach Hazards",
       "audio_file": "caution_alert.mp3",
-      "audio_text": "Caution! Dangerous surf conditions are in effect at Cowell Ranch State Beach Strong rip currents, powerful waves, and sneaker waves are possible. Stay well back from the water’s edge. Do not stand on rocks or jetties. This is a remote beach with no lifeguard services. Keep children close, remain alert at all times, and never turn your back on the ocean.",
+      "audio_text": "Caution! Dangerous surf conditions are in effect at Cowell Ranch State Beach. Strong rip currents, powerful waves, and sneaker waves are possible. Stay well back from the water’s edge. Do not stand on rocks or jetties. This is a remote beach with no lifeguard services. Keep children close, remain alert at all times, and never turn your back on the ocean.",
       "console_message": "⚠️ CAUTION: Elevated beach hazards - advisories in effect"
     },
     "HIGH": {
