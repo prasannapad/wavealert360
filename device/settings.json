@@ -78,7 +78,7 @@
       "led_pattern": "🔴🔴🔴🔴🔴🔴🔴🔴🔴🔴",
       "message_type": "HIGH ALERT - Coastal Hazard Detected",
       "audio_file": "high_alert.mp3",
-      "audio_text": "Please listen carefully! Today, there is a sneaker wave warning here at Cowell Ranch State Beach and along the Half Moon Bay coastline. People have been killed by sneaker-waves at this beach. They can strike without warning and powerful rip currents will drag you deep into cold ocean waters, leading to hypothermia, drowning, and death. So, stay far back from the water. Stay off rocks and jetties. Never turn your back on the ocean!",
+      "audio_text": "Please listen carefully! Today, there is a sneaker wave warning here at Cowell Ranch State Beach and along the Half Moon Bay coastline. People have been killed by sneaker waves at this beach. They can strike without warning and powerful rip currents will drag you deep into cold ocean waters, leading to hypothermia, drowning, and death. So, stay far back from the water. Stay off rocks and jetties. Never turn your back on the ocean!",
       "console_message": "🚨 HIGH ALERT: {hazard_type} detected!"
     }
   },
