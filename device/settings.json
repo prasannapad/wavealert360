@@ -66,7 +66,7 @@
       "led_pattern": "🟡🟡🟡🟡🟡🟡🟡🟡🟡🟡",
       "message_type": "CAUTION - Elevated Beach Hazards",
       "audio_file": "caution_alert.mp3",
-      "audio_text": "Caution! Dangerous surf conditions are in effect at Cowell Ranch State Beach and along the Half Moon Bay coastline. Strong rip currents, powerful waves, and sneaker waves are possible. Stay well back from the water’s edge. Do not stand on rocks or jetties. This is a remote beach with no lifeguard services. Keep children close, remain alert at all times, and never turn your back on the ocean.",
+      "audio_text": "Caution! Dangerous surf conditions are in effect at Cowell Ranch State Beach Strong rip currents, powerful waves, and sneaker waves are possible. Stay well back from the water’s edge. Do not stand on rocks or jetties. This is a remote beach with no lifeguard services. Keep children close, remain alert at all times, and never turn your back on the ocean.",
       "console_message": "⚠️ CAUTION: Elevated beach hazards - advisories in effect"
     },
     "HIGH": {
@@ -78,7 +78,7 @@
       "led_pattern": "🔴🔴🔴🔴🔴🔴🔴🔴🔴🔴",
       "message_type": "HIGH ALERT - Coastal Hazard Detected",
       "audio_file": "high_alert.mp3",
-      "audio_text": "Please listen carefully! Today, there is a sneaker wave warning here at Cowell Ranch State Beach. People have been killed by sneaker-waves at this beach. They can strike without warning and powerful rip currents will drag you deep into cold ocean waters, leading to hypothermia, drowning, and death. So, stay far back from the water. Stay off rocks and jetties. Never turn your back on the ocean!",
+      "audio_text": "Please listen carefully! Today, there is a sneaker wave warning here at Cowell Ranch State Beach and along the Half Moon Bay coastline. People have been killed by sneaker-waves at this beach. They can strike without warning and powerful rip currents will drag you deep into cold ocean waters, leading to hypothermia, drowning, and death. So, stay far back from the water. Stay off rocks and jetties. Never turn your back on the ocean!",
       "console_message": "🚨 HIGH ALERT: {hazard_type} detected!"
     }
   },
