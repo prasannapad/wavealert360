@@ -4,7 +4,7 @@
 
 # WaveAlert360
 
-**WaveAlert360** is a real-time coastal hazard warning system designed to protect beachgoers from the dangers of the ocean such as high surf, rip currents and [sneaker waves](https://en.wikipedia.org/wiki/Sneaker_wave) (also called sleeper waves). 
+**WaveAlert360** is an open-source real-time coastal hazard warning system designed to protect beachgoers from the dangers of the ocean such as high surf, rip currents and [sneaker waves](https://en.wikipedia.org/wiki/Sneaker_wave) (also called sleeper waves). 
 
 ## ❤️ Inspiration
 
