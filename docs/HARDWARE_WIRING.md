@@ -38,33 +38,37 @@ WaveAlert360 uses three independent WS2811/WS2812 addressable LED strips (48 LED
                                                              ▼
                (LEFT / Odd Pins)              (RIGHT / Even Pins)
          ┌─────────────────────┐        ┌─────────────────────┐
-   Pin 1 │  3V3 Power      ◄══ │●      ●│  5V Power       ◄══│ Pin 2
-         │  Red wire → GREEN    │        │  Red wire → RED    │
-         │  strip power (+V)    │        │  strip power (+5V)  │
+   Pin 1 │  3V3 Power      ◄══ │●      ●│  5V Power       ◄══ │ Pin 2
+         │  Red wire → GREEN   │        │  Red wire → RED     │
+         │  LED strip pwr (+V) │        │  LED strip pwr(+5V) │
+         │  🔴━━🟩🟩🟩       │        │  🔴━━🟥🟥🟥       │
          ├─────────────────────┤        ├─────────────────────┤
-   Pin 3 │  GPIO 2  (I2C SDA)  │●      ●│  5V Power       ◄══│ Pin 4
-         │                     │        │  Red wire → YELLOW │
-         │                     │        │  strip power (+5V)  │
+   Pin 3 │  GPIO 2  (I2C SDA)  │●      ●│  5V Power       ◄══ │ Pin 4
+         │                     │        │  Red wire → YELLOW  │
+         │                     │        │  LED strip pwr(+5V) │
+         │                     │        │  🔴━━🟨🟨🟨       │
          ├─────────────────────┤        ├─────────────────────┤
-   Pin 5 │  GPIO 3  (I2C SCL)  │●      ●│  Ground          ■ │ Pin 6
+   Pin 5 │  GPIO 3  (I2C SCL)  │●      ●│  Ground          ■  │ Pin 6
          │                     │        │  White wire → RED   │
-         │                     │        │  strip GND          │
+         │                     │        │  LED strip GND      │
+         │                     │        │  ⚪━━🟥🟥🟥       │
          ├─────────────────────┤        ├─────────────────────┤
-   Pin 7 │  GPIO 4  (GPCLK0)   │●      ●│  GPIO 14 (UART TX) │ Pin 8
+   Pin 7 │  GPIO 4  (GPCLK0)   │●      ●│  GPIO 14 (UART TX)  │ Pin 8
          ├─────────────────────┤        ├─────────────────────┤
-   Pin 9 │  Ground          ■  │●      ●│  GPIO 15 (UART RX) │ Pin 10
+   Pin 9 │  Ground          ■  │●      ●│  GPIO 15 (UART RX)  │ Pin 10
          ├─────────────────────┤        ├─────────────────────┤
-  Pin 11 │  GPIO 17            │●      ●│  GPIO 18 (PWM0) ◄══│ Pin 12
+  Pin 11 │  GPIO 17            │●      ●│  GPIO 18 (PWM0) ◄══ │ Pin 12
          │                     │        │  Green wire → RED   │
-         │                     │        │  strip data (DIN)   │
+         │                     │        │  LED strip DIN      │
+         │                     │        │  🟢━━🟥🟥🟥       │
          ├─────────────────────┤        ├─────────────────────┤
-  Pin 13 │  GPIO 27            │●      ●│  Ground          ■ │ Pin 14
+  Pin 13 │  GPIO 27            │●      ●│  Ground          ■  │ Pin 14
          ├─────────────────────┤        ├─────────────────────┤
   Pin 15 │  GPIO 22            │●      ●│  GPIO 23            │ Pin 16
          ├─────────────────────┤        ├─────────────────────┤
   Pin 17 │  3V3 Power          │●      ●│  GPIO 24            │ Pin 18
          ├─────────────────────┤        ├─────────────────────┤
-  Pin 19 │  GPIO 10 (SPI MOSI) │●      ●│  Ground          ■ │ Pin 20
+  Pin 19 │  GPIO 10 (SPI MOSI) │●      ●│  Ground          ■  │ Pin 20
          ├─────────────────────┤        ├─────────────────────┤
   Pin 21 │  GPIO 9  (SPI MISO) │●      ●│  GPIO 25            │ Pin 22
          ├─────────────────────┤        ├─────────────────────┤
@@ -74,21 +78,23 @@ WaveAlert360 uses three independent WS2811/WS2812 addressable LED strips (48 LED
          ├─────────────────────┤        ├─────────────────────┤
   Pin 27 │  GPIO 0  (EEPROM)   │●      ●│  GPIO 1  (EEPROM)   │ Pin 28
          ├─────────────────────┤        ├─────────────────────┤
-  Pin 29 │  GPIO 5             │●      ●│  Ground          ■ │ Pin 30
+  Pin 29 │  GPIO 5             │●      ●│  Ground          ■  │ Pin 30
          ├─────────────────────┤        ├─────────────────────┤
   Pin 31 │  GPIO 6             │●      ●│  GPIO 12 (PWM0)     │ Pin 32
          ├─────────────────────┤        ├─────────────────────┤
-  Pin 33 │  GPIO 13 (PWM1) ◄══ │●      ●│  Ground          ■ │ Pin 34
+  Pin 33 │  GPIO 13 (PWM1) ◄══ │●      ●│  Ground          ■  │ Pin 34
          │  Green wire → GREEN │        │  White wire → GREEN │
-         │  strip data (DIN)   │        │  strip GND          │
+         │  LED strip DIN      │        │  LED strip GND      │
+         │  🟢━━🟩🟩🟩       │        │  ⚪━━🟩🟩🟩       │
          ├─────────────────────┤        ├─────────────────────┤
   Pin 35 │  GPIO 19 (PCM FS)   │●      ●│  GPIO 16            │ Pin 36
          ├─────────────────────┤        ├─────────────────────┤
   Pin 37 │  GPIO 26            │●      ●│  GPIO 20 (PCM DIN)  │ Pin 38
          ├─────────────────────┤        ├─────────────────────┤
-  Pin 39 │  Ground          ■  │●      ●│  GPIO 21 (PCM) ◄══ │ Pin 40
+  Pin 39 │  Ground          ■  │●      ●│  GPIO 21 (PCM)  ◄══ │ Pin 40
          │  White wire →       │        │  Green wire →       │
-         │  YELLOW strip GND   │        │  YELLOW strip data  │
+         │  YELLOW LED str GND │        │  YELLOW LED str DIN │
+         │  ⚪━━🟨🟨🟨       │        │  🟢━━🟨🟨🟨       │
          └─────────────────────┘        └─────────────────────┘
 ```
 
@@ -96,15 +102,15 @@ WaveAlert360 uses three independent WS2811/WS2812 addressable LED strips (48 LED
 
 | Physical Pin | BCM GPIO | Function | Wire Color | LED Strip |
 |:---:|:---:|:---:|:---:|:---|
-| **1** | — | 3.3V Power | Red wire | GREEN strip power |
-| **2** | — | 5V Power | Red wire | RED strip power |
-| **4** | — | 5V Power | Red wire | YELLOW strip power |
-| **6** | — | Ground | White wire | RED strip GND |
-| **12** | GPIO 18 | PWM0 | Green wire | RED strip data (48 LEDs — DANGER) |
-| **33** | GPIO 13 | PWM1 | Green wire | GREEN strip data (48 LEDs — SAFE) |
-| **34** | — | Ground | White wire | GREEN strip GND |
-| **39** | — | Ground | White wire | YELLOW strip GND |
-| **40** | GPIO 21 | PCM DOUT | Green wire | YELLOW strip data (48 LEDs — CAUTION) |
+| **1** | — | 3.3V Power | 🔴━━ Red wire | 🟩🟩🟩 GREEN LED strip power |
+| **2** | — | 5V Power | 🔴━━ Red wire | 🟥🟥🟥 RED LED strip power |
+| **4** | — | 5V Power | 🔴━━ Red wire | 🟨🟨🟨 YELLOW LED strip power |
+| **6** | — | Ground | ⚪━━ White wire | 🟥🟥🟥 RED LED strip GND |
+| **12** | GPIO 18 | PWM0 | 🟢━━ Green wire | 🟥🟥🟥 RED LED strip data (48 LEDs — DANGER) |
+| **33** | GPIO 13 | PWM1 | 🟢━━ Green wire | 🟩🟩🟩 GREEN LED strip data (48 LEDs — SAFE) |
+| **34** | — | Ground | ⚪━━ White wire | 🟩🟩🟩 GREEN LED strip GND |
+| **39** | — | Ground | ⚪━━ White wire | 🟨🟨🟨 YELLOW LED strip GND |
+| **40** | GPIO 21 | PCM DOUT | 🟢━━ Green wire | 🟨🟨🟨 YELLOW LED strip data (48 LEDs — CAUTION) |
 
 > **Note:** The GREEN strip is powered from Pin 1 (3.3V) instead of 5V.
 > This works at low brightness but the strip may appear slightly dimmer than the other two.
