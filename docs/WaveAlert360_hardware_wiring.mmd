@@ -1,0 +1,78 @@
+flowchart TB
+    subgraph PI["🖥️ Raspberry Pi Zero 2 W"]
+        direction LR
+        P1["Pin 1<br/>3.3V Power"]
+        P2["Pin 2<br/>5V Power"]
+        P4["Pin 4<br/>5V Power"]
+        P6["Pin 6<br/>Ground"]
+        P12["Pin 12<br/>GPIO 18<br/>PWM0"]
+        P33["Pin 33<br/>GPIO 13<br/>PWM1"]
+        P34["Pin 34<br/>Ground"]
+        P39["Pin 39<br/>Ground"]
+        P40["Pin 40<br/>GPIO 21<br/>PCM"]
+    end
+
+    subgraph RED_STRIP["🟥🟥🟥 RED LED Strip — DANGER"]
+        R_PWR["🔴 +5V Power"]
+        R_GND["⚪ Ground"]
+        R_DIN["🟢 Data IN"]
+        R_LEDS["48 LEDs"]
+    end
+
+    subgraph GREEN_STRIP["🟩🟩🟩 GREEN LED Strip — SAFE"]
+        G_PWR["🔴 +3.3V Power"]
+        G_GND["⚪ Ground"]
+        G_DIN["🟢 Data IN"]
+        G_LEDS["48 LEDs"]
+    end
+
+    subgraph YELLOW_STRIP["🟡🟡🟡 YELLOW LED Strip — CAUTION"]
+        Y_PWR["🔴 +5V Power"]
+        Y_GND["⚪ Ground"]
+        Y_DIN["🟢 Data IN"]
+        Y_LEDS["48 LEDs"]
+    end
+
+    P2 -- "🔴 Red wire" --> R_PWR
+    P6 -- "⚪ White wire" --> R_GND
+    P12 -- "🟢 Green wire" --> R_DIN
+
+    P1 -- "🔴 Red wire" --> G_PWR
+    P34 -- "⚪ White wire" --> G_GND
+    P33 -- "🟢 Green wire" --> G_DIN
+
+    P4 -- "🔴 Red wire" --> Y_PWR
+    P39 -- "⚪ White wire" --> Y_GND
+    P40 -- "🟢 Green wire" --> Y_DIN
+
+    R_PWR --> R_LEDS
+    R_GND --> R_LEDS
+    R_DIN --> R_LEDS
+
+    G_PWR --> G_LEDS
+    G_GND --> G_LEDS
+    G_DIN --> G_LEDS
+
+    Y_PWR --> Y_LEDS
+    Y_GND --> Y_LEDS
+    Y_DIN --> Y_LEDS
+
+    PSU["🔌 USB 5V/2.5A+<br/>Power Adapter"] --> PI
+
+    style PI fill:#1a1a2e,stroke:#e0e0e0,stroke-width:3px,color:#ffffff
+    style RED_STRIP fill:#cc0000,stroke:#ff3333,stroke-width:3px,color:#ffffff
+    style GREEN_STRIP fill:#006600,stroke:#33cc33,stroke-width:3px,color:#ffffff
+    style YELLOW_STRIP fill:#cc9900,stroke:#ffcc00,stroke-width:3px,color:#ffffff
+    style PSU fill:#333333,stroke:#888888,stroke-width:2px,color:#ffffff
+    style R_LEDS fill:#ff0000,stroke:#ff3333,color:#ffffff
+    style G_LEDS fill:#00cc00,stroke:#33ff33,color:#ffffff
+    style Y_LEDS fill:#ffcc00,stroke:#ffdd33,color:#000000
+    style P1 fill:#2a2a4e,stroke:#aaaaff,color:#ffffff
+    style P2 fill:#2a2a4e,stroke:#aaaaff,color:#ffffff
+    style P4 fill:#2a2a4e,stroke:#aaaaff,color:#ffffff
+    style P6 fill:#2a2a4e,stroke:#aaaaff,color:#ffffff
+    style P12 fill:#2a2a4e,stroke:#aaaaff,color:#ffffff
+    style P33 fill:#2a2a4e,stroke:#aaaaff,color:#ffffff
+    style P34 fill:#2a2a4e,stroke:#aaaaff,color:#ffffff
+    style P39 fill:#2a2a4e,stroke:#aaaaff,color:#ffffff
+    style P40 fill:#2a2a4e,stroke:#aaaaff,color:#ffffff
