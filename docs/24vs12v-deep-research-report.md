@@ -1,4 +1,4 @@
-# WaveAlert360 Power Architecture for
+# WaveAlert360 Power Architecture Options 12V or 24V? An Analysis by ChatGPT
 
 ## Executive summary
 
